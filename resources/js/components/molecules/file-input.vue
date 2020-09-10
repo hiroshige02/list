@@ -1,0 +1,43 @@
+<template>
+
+    <v-col cols=12 ref="file_input" class="d-flex no-gutters">
+        <v-col cols="2" class="pt-2" @click="decreaseInput()">
+            <button-event
+            :button-text="buttonText"
+            button-color="pink"
+            :is-normal="true"
+            width="45"
+            height="40"
+            min-width="20"
+            min-height="20"
+            :font="font"
+            >
+            </button-event>
+        </v-col> 
+        <v-col cols="10">
+            <file-input-tag
+            :name="name"
+            :files="files"
+            ></file-input-tag>
+        </v-col>
+
+    </v-col>
+
+
+</template>
+
+<script> 
+  export default {
+    props: ["name","buttonText","files","font",
+    "buttonColor"],
+    // data(){
+    //     return [];
+    // },
+    methods: {
+        decreaseInput(){
+            console.log('comecomecomexome');
+            this.$refs.file_input.remove();
+        }
+    }
+  }
+</script>
