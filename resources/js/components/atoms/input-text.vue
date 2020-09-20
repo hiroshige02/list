@@ -3,14 +3,16 @@
     :label="textTitle"
     outlined
     :name="name"
-    :value="existValue"
+    :value="value"
+    :error-messages="errorMessages"
     :prefix="prefixText"
     :success-messages="success"
     ></v-text-field>
 </template>
 
-<script> 
+<script>
   export default {
-    props: ['textTitle','name','prefixText','success','existValue']
+    props: ['textTitle','name',
+    'prefixText','success','value','errorMessages']
   }
 </script>

@@ -17,9 +17,12 @@ use Illuminate\Support\Facades\Route;
 //     return view('welcome');
 // });
 
+Route::get('/register', 'Auth\RegisterController@showRegistrationForm')->name('register');
+Route::post('/register', 'Auth\RegisterController@register')->name('register');
+Route::post('/logout', 'Auth\LoginController@logout')->name('logout');
 
 Route::get('/login', 'Auth\LoginController@showLoginForm')->name('login');
-Route::post('/login', 'Auth\LoginController@login');
+Route::post('/login', 'Auth\LoginController@login')->name('login');
 Route::get('/maintenance', 'Maintenance\MaintenanceController@index');
 // Route::get('/maintenance/sake', 'Maintenance\SakeController@index');
 Route::get('/maintenance/sake/searched', 'Maintenance\SakeController@searched');
@@ -41,3 +44,7 @@ Route::get('/sake/{id}', 'Viewer\SakeController@show');
 Route::get('/', 'Home\TopController@welcome');
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+
+Route::post('/maintenance/sake/search', 'Maintenance\SakeController@search');
+

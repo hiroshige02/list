@@ -15,7 +15,7 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('mail_address')->unique()->comment('メールアドレス');
+            $table->string('email')->unique()->comment('メールアドレス');
             $table->string('password',256)->comment('パスワード');
             $table->text('comment')->nullable()->comment('コメント');
             $table->softDeletes();

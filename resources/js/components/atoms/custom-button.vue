@@ -1,6 +1,7 @@
-<template>  
-    <div class="no-gutters">  
-        <v-btn 
+<template>
+    <div class="no-gutters">
+        <v-btn
+          type='submit'
           :color="buttonColor"
           :small="isSmall"
           :large="isLarge"
@@ -14,10 +15,10 @@
           dark
           @click="clickEvent"
         ><span :class="font">{{buttonText}}</span></v-btn>
-    </div> 
+    </div>
 </template>
 
-<script> 
+<script>
   export default {
     props: ['buttonText','buttonColor',
     'isSmall','isNormal','isLarge',
@@ -29,7 +30,7 @@
         // large: "false",
         // normal: "false",
         // color: "primary",
-        
+
       };
     },
     methods: {

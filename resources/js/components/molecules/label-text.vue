@@ -3,16 +3,17 @@
         <p class="label-text">{{textTitle}}</p>
         <!-- <input-text :text-title="textTitle"></input-text> -->
         <input-text
-        :exist-value="existValue"
+        :value="value"
+        :name="name"
+        :error-messages="errorMessages"
         >
         </input-text>
     </div>
 </template>
 
 <script>
-//import MessageContent from "~/resources/atoms/input-text.vue";
 
     export default {
-        props: ['textTitle','existValue']
+        props: ['textTitle','value','name','errorMessages']
     }
 </script>

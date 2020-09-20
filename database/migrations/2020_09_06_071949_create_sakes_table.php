@@ -21,7 +21,7 @@ class CreateSakesTable extends Migration
             $table->string('kura',256)->comment('蔵');
             $table->text('memo',1000)->comment('コメント');
             $table->unsignedInteger('personal_preference_id')->comment('個人評価ID');
-            $table->unsignedInteger('maker_evaluation_id')->comment('個人評価ID');
+            $table->unsignedInteger('maker_evaluation_id')->comment('メーカー評価ID');
             $table->text('comment')->nullable()->comment('コメント');
             $table->timestamps();
             $table->softDeletes();

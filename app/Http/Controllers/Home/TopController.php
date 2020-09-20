@@ -21,9 +21,9 @@ class TopController extends Controller
         $viewData['title'] = '徒然日本酒紀行（仮）';
         $viewData['searched'] = true;
         $viewData['areas'] = MasterDefine::AREAS;
-        
+
         $viewData['maker_selections'] = [
-            '評価内容種類' => ['日本酒度','アミノ酸度'],
+            '評価内容種類' => [MasterDefine::SAKE_DEGREE, MasterDefine::AMINO_ACID_DEGREE],
             '動的に変わる選択肢' => ['1〜5','5〜10']
         ];
 

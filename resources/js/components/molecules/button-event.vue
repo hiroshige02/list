@@ -1,4 +1,4 @@
-<template>  
+<template>
     <div @click="action">
       <custom-button
           :button-color="buttonColor"
@@ -14,25 +14,39 @@
       >
       </custom-button>
     </div>
-</template> 
+</template>
 
-<script> 
+<script>
   export default {
     props: ['buttonText','buttonColor',
     'isSmall','isNormal','isLarge',
     'height','width','minWidth','minHeight',
     'font','eventName'],
+    data(){
+        return {};
+    },
     methods: {
         action:function(){
-          if(this.$props.eventName == "increaseInput"){
-            this.increaseInput();
-          }else{
-            return;
-          }
+        //   if(this.$props.eventName == "increaseInput"){
+        //     this.increaseInput();
+        //   }elseif(this.$props.eventName == "login"){
+        //     axios.post( "/login',{
+        //     name：this.name、
+        //     email ：this.email、
+        //     description：this.description
+        //     }）。then（response => {
+        //     console.log（ 'successful'）;
+        //     }）。catch（error => {
+        //     if（error.response.status == 422）{
+        //     this .validationErrors = error.response.data.errors;
+        //     }
+        //   }else{
+        //     return;
+        //   }
         },
         increaseInput(){
-            console.log('llllllllllllll'); //OK
-            
+            console.log('llllllllllllll');
+
         }
     }
   }

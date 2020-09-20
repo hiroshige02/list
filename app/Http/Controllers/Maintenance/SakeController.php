@@ -17,7 +17,7 @@ class SakeController extends Controller
     }
 
 
-    
+
     public function prefectureIndex($prefecture){
         // if(!empty($id)){
             // $sake = Sake::wherePrefectureId($prefecture_id)->get();
@@ -27,7 +27,7 @@ class SakeController extends Controller
         if(!in_array($prefecture,$prefecture_keys)){
             return;
         }
-    
+
         $prefecture = MasterDefine::PREFECTURES[$prefecture];
         // if($prefecture_id == 1){
             $viewData = [];
@@ -56,7 +56,7 @@ class SakeController extends Controller
 
     function show($id){
         //該当ID酒の存在チェック
-                
+
         $viewData = [];
         $viewData['title'] = 'さわ音';
         $viewData['set_per_page'] = 2;
@@ -66,7 +66,7 @@ class SakeController extends Controller
 
     function create(){
         //該当ID酒の存在チェック
-                
+
         $viewData = [];
         $viewData['title'] = '新規登録';
         // $viewData['page_number'] = 1;
@@ -76,7 +76,7 @@ class SakeController extends Controller
 
     function createConfirm(){
         //該当ID酒の存在チェック
-        
+
 
         $viewData = [];
         $viewData['title'] = '新規登録確認';
@@ -97,7 +97,7 @@ class SakeController extends Controller
 
     function edit(){
         //該当ID酒の存在チェック
-                
+
         $viewData = [];
         $viewData['title'] = '編集';
         // $viewData['page_number'] = 1;
@@ -119,5 +119,11 @@ class SakeController extends Controller
         // 更新のための処理
 
         return view('maintenance.sake-edit-complete', $viewData);
+    }
+
+
+
+    function search(Request $request){
+        var_dump($request->post());exit;
     }
 }

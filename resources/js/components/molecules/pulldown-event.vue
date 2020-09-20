@@ -1,15 +1,21 @@
 <template>
     <div>
         <pulldown
-        :items="items"
-        :label="label"        
+        :item-array="itemArray"
+        :label="label"
+        :post-name="classPostName"
         >
         </pulldown>
     </div>
 </template>
 
-<script> 
+<script>
   export default {
-    props: ["items","label"]
+    props: ["itemArray","label","classPostName"],
+    beforeMount(){
+        // console.log("this.$props.postName");
+        // console.log(JSON.stringify(this.$props.itemArray));
+    }
+
   }
 </script>

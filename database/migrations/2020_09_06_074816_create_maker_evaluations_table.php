@@ -15,6 +15,7 @@ class CreateMakerEvaluationsTable extends Migration
     {
         Schema::create('maker_evaluations', function (Blueprint $table) {
             $table->id();
+            $table->unsignedInteger('sake_id')->comment('酒ID');
             $table->unsignedSmallInteger('sake_degree')->comment('日本酒度');
             $table->unsignedSmallInteger('acidity')->comment('酸度');
             $table->text('comment')->nullable()->comment('コメント');

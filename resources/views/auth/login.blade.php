@@ -2,22 +2,35 @@
 
 @section('contents')
 
-<?php //OK echo 'eeeee'; exit;?>
 <div id="app">
 <v-app>
 <v-main>
 
     <v-container>
-        
+
+        <form method="POST" action="{{ route('login') }}">
+            @csrf
+
         <v-row justify="center">
 
-        {{-- <form method="POST" action="{{ route('login') }}">
-                @csrf --}}
+            {{-- error-messages='{{ $errors->first('email') }}' --}}
+                <v-col cols="12">
+                    <label-text
+                        text-title='アカウント'
+                        name="email"
+                        value="{{ old('email') }}"
+                        error-messages="{{ $errors->first('email') }}"
+                    >
+                    </label-text>
+                    <label-text
+                        text-title='パスワード'
+                        name="password"
+                        value="{{ old('password') }}"
+                        error-messages="{{ $errors->first('password') }}"
+                    >
+                    </label-text>
 
-                <v-col>
-                    <label-text text-title='ユーザー名'></label-text>
-                    <label-text text-title='パスワード'></label-text>
-                    <v-col cols=12 class="text-center large-button">
+                    <v-col cols="12" class="text-center large-button">
                         <button-event
                             button-text='{{$title}}'
                             button-color="pink"
@@ -25,6 +38,7 @@
                             height="50px"
                             width="150px"
                             font="large-button"
+                            event-name="login"
                         >
                         </button-event>
                     </v-col>
@@ -33,12 +47,11 @@
                             戻る
                         </a>
                     </v-col>
-                    
+
 
                 </v-col>
-                
-            {{-- </form> --}}
-        </v-row>
+            </v-row>
+        </form>
 
     </v-container>
     </v-main>

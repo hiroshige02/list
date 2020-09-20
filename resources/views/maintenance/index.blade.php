@@ -8,7 +8,10 @@
 
 
 <v-container>
-    
+
+    <form method="POST" action="/maintenance/sake/search">
+        @csrf
+
         <v-row>
             <v-col cols=12>
                 <!-- <a href="#" class="link">
@@ -41,10 +44,10 @@
                     font="large-button"
                     >
                     </button-event>
-                </v-col>   
-            
+                </v-col>
+
             </v-col>
-                
+
             <v-col cols="12" v-if="{{ $searched }}">
                 <ul>
                     <li><a>検索結果1</a></li>
@@ -61,21 +64,15 @@
         </v-row>
 
         {{-- メーカーの評価 --}}
-        <v-row class="no-gutters pt-8">
+        <v-row class="pt-8">
             <v-col cols=12 justify="center">
-                <v-col class="text-center">
                     <h2 class="center">メーカーの評価から探す</h2>
-                </v-col>
-                <v-col class="d-flex">
-                    @foreach($maker_selections as $label => $items)
-                        <v-col cols=6>
-                            <pulldown-event
-                            label="{{ $label }}"
-                            :items='@json($items)'
-                            ></v-select>
-                        </v-col>
-                    @endforeach
-                </v-col>
+
+                    <coordinate-pulldown
+                    :items='@json($maker_selections)'
+                    >
+                    </coordinate-pulldown>
+
             </v-col>
         </v-row>
 
@@ -84,22 +81,19 @@
             <v-col cols=12 justify="center">
                 <h2 class="center">個人の評価から探す</h2>
             </v-col>
-            @foreach($personal_selections as $item)
+            @foreach($personal_selections as $column => $option)
                 <v-col cols=12 class="d-flex no-gutters">
                     <v-col cols=6>
-                        <pulldown-event
-                        label="{{ $item['class_name'] }}"
-                        :items='@json($item["classes"])'
-                        ></v-select>
+                        <span>{{ $option['label'] }}</span>
                     </v-col>
                     <v-col cols=6>
                         <pulldown-event
-                        label="{{ $item['selection_name'] }}"
-                        :items='@json($item["selections"])'
-                        ></v-select>
+                        :item-array='@json($option["selections"])'
+                        class-postname="{{$column}}"
+                        ></pulldown-event>
                     </v-col>
                 </v-col>
-            @endforeach      
+            @endforeach
         </v-row>
 
 
@@ -124,20 +118,19 @@
                                     </li>
                                 @endforeach
                             </ul>
-                    
+
                         </li>
                     </ul>
                 @endforeach
-            </v-col>     
+            </v-col>
         </v-row>
 
-
-    
+        <button type="submit">送信</button>
+    </form>
+</v-container>
 
 </v-main>
 </v-app>
 </div>
-
-
 
 @endsection

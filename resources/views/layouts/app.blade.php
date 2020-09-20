@@ -7,8 +7,8 @@
         <link href="{{ mix('/css/app.css') }}" rel="stylesheet">
      mix-manifest.json内のパスが/public/css/app.cssに変更できるまで不使用
         --}}
-        <link rel="stylesheet" href="/resources/sass/app.scss">
-        <link rel="stylesheet" href="/resources/sass/make.scss">
+        <link rel="stylesheet" href="/public/css/app.css">
+        <link rel="stylesheet" href="/public/css/make.css">
         {{-- icon導入のため --}}
         <link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
         <meta name="csrf-token" content="{{ csrf_token() }}">

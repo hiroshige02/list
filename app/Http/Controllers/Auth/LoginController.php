@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Auth;
 
+
 use App\Http\Controllers\Controller;
+use Validator;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use App\Models\User;
 
 class LoginController extends Controller
 {
@@ -42,10 +45,10 @@ class LoginController extends Controller
     }
 
 
-    protected function guard()
-    {
-        return Auth::guard('admin');
-    }
+    // protected function guard()
+    // {
+    //     return Auth::guard('user');
+    // }
 
     /**
      * ログイン画面
@@ -56,20 +59,23 @@ class LoginController extends Controller
     function showLoginForm(){
         $viewData = [];
         $viewData['title'] = 'ログイン';
-        
+
         return view('auth.login', $viewData);
     }
 
-    function authenticate(Request $request){
-        $credentials = $request->only('mail_address', 'password');
+    protected function validateLogin(Request $request)
+    {
+        $request->validate([
+            // $this->username() => 'required|string|email|max:255|unique:users|bail',
+            // 'password' => 'required|string|max:255|bail'
+            $this->username() => 'required|string',
+            'password' => 'required|string'
+        ]);
 
-        if (Auth::attempt($credentials)) {
-            // 認証に成功した
-            return redirect()->intended('/maintenance');
-        }        
     }
 
-    function logout(){
-        Auth::logout();     
+    protected function loggedOut(Request $request)
+    {
+        return redirect('/login');
     }
 }

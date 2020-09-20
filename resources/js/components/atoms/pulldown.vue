@@ -1,16 +1,34 @@
-<template>  
-    <div>  
-        <v-select
-        :items="items"
-        :label="label"
-        dense
-        solo
-        ></v-select>
-    </div> 
+<template>
+    <v-select
+    :items="itemArray"
+    :label="label"
+    dense
+    solo
+    :name="postName"
+    v-model="selectedValue"
+    v-on:change="changeEvent"
+    ></v-select>
 </template>
 
-<script> 
+<script>
   export default {
-    props: ["items","label"]
+    props: ["itemArray","label","postName","eventName"],
+    data (){
+        return {
+            selected: '',
+            selectedValue: ''
+        }
+    },
+
+    methods: {
+        changeEvent() {
+            if(this.$props.eventName !== undefined){
+                console.log(this.$props.eventName);
+                this.$emit(this.$props.eventName, this.selectedValue);
+
+            }
+        }
+
+    }
   }
 </script>

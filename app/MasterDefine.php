@@ -32,7 +32,7 @@ class MasterDefine {
     const CHIBA = 11;
     const TOKYO = 12;
     const KANAGAWA = 13;
-    
+
     const NIIGATA = 14;
     const TOYAMA = 15;
     const ISHIKAWA = 16;
@@ -148,7 +148,7 @@ class MasterDefine {
                 MasterDefine::AKITA => MasterDefine::PREFECTURES[MasterDefine::AKITA],
                 MasterDefine::MIYAGI => MasterDefine::PREFECTURES[MasterDefine::YAMAGATA],
                 MasterDefine::YAMAGATA => MasterDefine::PREFECTURES[MasterDefine::MIYAGI],
-                MasterDefine::FUKUSHIMA => MasterDefine::PREFECTURES[MasterDefine::FUKUSHIMA]         
+                MasterDefine::FUKUSHIMA => MasterDefine::PREFECTURES[MasterDefine::FUKUSHIMA]
             ]
         ],
         MasterDefine::KANTO_AREA => [
@@ -178,7 +178,7 @@ class MasterDefine {
                 MasterDefine::SHIZUOKA => MasterDefine::PREFECTURES[MasterDefine::SHIZUOKA],
                 MasterDefine::AICHI => MasterDefine::PREFECTURES[MasterDefine::AICHI],
             ]
-        ], 
+        ],
         MasterDefine::KINKI_AREA => [
             'name' => 'kinki',
             'display_name' => '近畿',
@@ -190,13 +190,13 @@ class MasterDefine {
                 MasterDefine::HYOUGO => MasterDefine::PREFECTURES[MasterDefine::HYOUGO],
                 MasterDefine::NARA => MasterDefine::PREFECTURES[MasterDefine::NARA],
                 MasterDefine::WAKAYAMA => MasterDefine::PREFECTURES[MasterDefine::WAKAYAMA],
-        
+
             ]
-        ],     
+        ],
         MasterDefine::CHUGOKU_AREA => [
             'name' => 'chugoku',
             'display_name' => '中国',
-            'prefectures' => [    
+            'prefectures' => [
                 MasterDefine::TOTTORI => MasterDefine::PREFECTURES[MasterDefine::TOTTORI],
                 MasterDefine::SHIMANE => MasterDefine::PREFECTURES[MasterDefine::SHIMANE],
                 MasterDefine::OKAYAMA => MasterDefine::PREFECTURES[MasterDefine::OKAYAMA],
@@ -230,9 +230,13 @@ class MasterDefine {
 
             ],
         ]
-        
+
     ];
 
+    //アミノ酸度
+    const SAKE_DEGREE = 'アミノ酸度';
+
+    //日本酒度
     const SAKE_DEGREE_0 = 0;
     const SAKE_DEGREE_1 = 1;
     const SAKE_DEGREE_2 = 2;
@@ -243,18 +247,50 @@ class MasterDefine {
     const SAKE_DEGREE_7 = 7;
     const SAKE_DEGREE_8 = 8;
     const SAKE_DEGREE_9 = 9;
+    const SAKE_DEGREE_10 = 10;
+    const SAKE_DEGREE_11 = 11;
 
     const SAKE_DEGREES  = [
-        MasterDefine::SAKE_DEGREE_0 => '0-5',
-        MasterDefine::SAKE_DEGREE_0 => '6-10',
-        MasterDefine::SAKE_DEGREE_0 => '11-15',
-        MasterDefine::SAKE_DEGREE_0 => '16-20',
-        MasterDefine::SAKE_DEGREE_0 => '21-25',
+        MasterDefine::SAKE_DEGREE_0 => '-26~-30',
+        MasterDefine::SAKE_DEGREE_1 => '-21~-25',
+        MasterDefine::SAKE_DEGREE_2 => '-16~-20',
+        MasterDefine::SAKE_DEGREE_3 => '-11~-15',
+        MasterDefine::SAKE_DEGREE_4 => '-6~-10',
+        MasterDefine::SAKE_DEGREE_5 => '-1~-5',
+
+        MasterDefine::SAKE_DEGREE_6 => '0~5',
+        MasterDefine::SAKE_DEGREE_7 => '6~10',
+        MasterDefine::SAKE_DEGREE_8 => '11~15',
+        MasterDefine::SAKE_DEGREE_9 => '16~20',
+        MasterDefine::SAKE_DEGREE_10 => '21~25',
+        MasterDefine::SAKE_DEGREE_11 => '26~30',
 
     ];
 
-    //個人評価
-    
+    //アミノ酸度
+    const AMINO_ACID_DEGREE = '日本酒度';
 
+    const AMINO_ACID_DEGREE_0 = 0;
+    const AMINO_ACID_DEGREE_1 = 1;
+    const AMINO_ACID_DEGREE_2 = 2;
+    const AMINO_ACID_DEGREE_3 = 3;
+    const AMINO_ACID_DEGREE_4 = 4;
+    const AMINO_ACID_DEGREE_5 = 5;
+
+    const AMINO_ACID_DEGREES = [
+        MasterDefine::AMINO_ACID_DEGREE_0 => '0~0.5',
+        MasterDefine::AMINO_ACID_DEGREE_1 => '0.6~1.0',
+        MasterDefine::AMINO_ACID_DEGREE_2 => '1.1~1.5',
+        MasterDefine::AMINO_ACID_DEGREE_3 => '1.6~2.0',
+        MasterDefine::AMINO_ACID_DEGREE_4 => '2.1~2.5',
+        MasterDefine::AMINO_ACID_DEGREE_5 => '2.6~3.0',
+    ];
+
+    //個人評価項目
+    const SWEETNESS = '甘さ';
+    const ACIDITY = '酸味';
+    const RICHNESS = '味の濃さ';
+    const COST_PERFORMANCE = 'コストパフォーマンス';
+    const RECOMMEND_POINT = 'おすすめ度';
 
 }
