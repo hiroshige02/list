@@ -3,7 +3,9 @@
         <pulldown
         :item-array="itemArray"
         :label="label"
-        :post-name="classPostName"
+        :name="name"
+        :selected-value="selectedValue"
+        :error-message="errorMessage"
         >
         </pulldown>
     </div>
@@ -11,10 +13,13 @@
 
 <script>
   export default {
-    props: ["itemArray","label","classPostName"],
-    beforeMount(){
-        // console.log("this.$props.postName");
-        // console.log(JSON.stringify(this.$props.itemArray));
+    props: ["itemArray","label","name","value","oldValue","oldText","errorMessage"],
+    data (){
+        return {
+            selectedValue: this.$props.value,
+        }
+    },
+    created(){
     }
 
   }

@@ -62,9 +62,6 @@
     },
     methods: {
         changeSelection(selectedValue){
-            console.log('egumieegm');
-            console.log(selectedValue);
-            console.log(JSON.stringify(this.$data.items));
             this.$data.selections = this.$props.items['selections'][selectedValue];
         }
     }

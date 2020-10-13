@@ -233,8 +233,8 @@ class MasterDefine {
 
     ];
 
-    //アミノ酸度
-    const SAKE_DEGREE = 'アミノ酸度';
+    //日本酒度
+    const SAKE_DEGREE = '日本酒度';
 
     //日本酒度
     const SAKE_DEGREE_0 = 0;
@@ -268,7 +268,7 @@ class MasterDefine {
     ];
 
     //アミノ酸度
-    const AMINO_ACID_DEGREE = '日本酒度';
+    const AMINO_ACID_DEGREE = 'アミノ酸度';
 
     const AMINO_ACID_DEGREE_0 = 0;
     const AMINO_ACID_DEGREE_1 = 1;

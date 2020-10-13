@@ -111,7 +111,7 @@ return [
         'array' => 'The :attribute must contain :size items.',
     ],
     'starts_with' => 'The :attribute must start with one of the following: :values.',
-    'string' => 'The :attribute must be a string.',
+    'string' => ':attribute must be a string.',
     'timezone' => 'The :attribute must be a valid zone.',
     'unique' => 'The :attribute has already been taken.',
     'uploaded' => 'The :attribute failed to upload.',
@@ -149,6 +149,15 @@ return [
     'attributes' => [
         'email' => 'Eメールアドレス',
         'password' => 'パスワード',
+        'name' => '酒名',
+        'name_kana' => '酒名(全角カタカナ)',
+        'prefecture' => '県',
+        'kura' => '蔵名',
+        'sweetness' => '甘さ',
+        'sour_taste' => '酸味',
+        'richness' => '濃醇',
+        'cost_performance' => 'コストパフォーマンス',
+        'recommend_point' => 'おすすめ度'
     ],
 
 ];

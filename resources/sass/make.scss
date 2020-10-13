@@ -1,27 +1,48 @@
-.body-container {
-    width: 400px;
-    margin: 0 auto;
-  }
-
-  .text-center {
-    text-align: center;
-  }
-
-  h1 {
-    font-weight: bold;
-    text-align: center;
-    margin-top: 20px;
-  }
-
-  .v-text-field__slot input[type=text] {
-      font-size: 20px;
-  }
-
-  .large-button {
-      font-size: 16px;
-  }
 
 .hide {
     display: none;
 }
 
+// @media (max-width: 599px) {
+    /* スマホ大より小さいことを想定　参考は以下
+    http://www.yuruyuru-blog.jp/blog-posts/2018/11/14/responsive.html
+    */
+
+    .body-container {
+        position: relative;
+        width: 400px;
+        margin: 0 auto;
+      }
+
+      .text-center {
+        text-align: center;
+      }
+
+      h1 {
+        font-weight: bold;
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      .v-text-field__slot input[type=text] {
+          font-size: 20px;
+      }
+
+      .large-button {
+          font-size: 16px;
+      }
+
+      .login-link {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 70px;
+        height: 70px;
+        background-size:contain;
+      }
+
+      .logout-button {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }

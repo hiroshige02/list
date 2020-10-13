@@ -1,7 +1,7 @@
 <template>
     <div class="no-gutters">
         <v-btn
-          type='submit'
+          :type="type"
           :color="buttonColor"
           :small="isSmall"
           :large="isLarge"
@@ -20,7 +20,7 @@
 
 <script>
   export default {
-    props: ['buttonText','buttonColor',
+    props: ['type','buttonText','buttonColor',
     'isSmall','isNormal','isLarge',
     'height','width','minWidth','minHeight',
     'iconType','font','eventName'],

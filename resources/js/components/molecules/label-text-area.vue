@@ -1,20 +1,20 @@
 <template>
     <div>
-        <p class="label-text">{{name}}</p>
-        <text-area 
-            :name="name"
-            :value="value"
-            :placeholder="placeholder"
-            :color="color"
+        <p class="label-text">{{label}}</p>
+        <text-area
+        :name="name"
+        :value="value"
+        :placeholder="placeholder"
+        :color="color"
         >
         </text-area>
     </div>
 </template>
 
 
-<script> 
+<script>
   export default {
-    props: ['name','value','placeholder','color'],
+    props: ['label','name','value','placeholder','color'],
     data() {
         return {
 

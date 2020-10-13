@@ -8,7 +8,7 @@
             :is-normal="true"
             :font="font"
             :name="name"
-            :files="file"
+            :value="file"
             :button-color="buttonColor"
             :is-small="isSmall"
             :is-large="isLarge"
@@ -23,12 +23,11 @@
             :is-normal="true"
             :font="font"
             :name="name"
-
             :button-color="buttonColor"
             :is-small="isSmall"
             :is-large="isLarge"
             >
-            </file-input>     
+            </file-input>
         </div>
 
         <v-col cols=2 @click="increaseInput()">
@@ -46,11 +45,9 @@
         </v-col>
     </v-col>
 
-  
-
 </template>
 
-<script> 
+<script>
   export default {
     props: ["name","buttonText","files","font",
     "buttonColor","isSmall","isLarge","height","width",
@@ -62,10 +59,10 @@
             console.log(this.$data.emptyField);
         }
     },
-    mounted: function(){
-        let setData;
+    created(){
         if(this.$props.files){
             this.$data.dataFiles = this.$props.files;
+            console.log('files' + this.$data.dataFiles); //OK
         }
     },
     data(){

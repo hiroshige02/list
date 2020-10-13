@@ -24,6 +24,7 @@
 
                 <div class="logout-button">
                     <button-event
+                    type="submit"
                     button-text="ログアウト"
                     button-color="pink"
                     :is-small='true'

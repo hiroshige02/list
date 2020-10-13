@@ -14,17 +14,16 @@
 
         <v-row>
             <v-col cols=12>
-                <!-- <a href="#" class="link">
-                    新規登録
-                </a> -->
-                <button-event
+                <a href="/maintenance/sake/create">
+                    <button-event
                     button-text="新規登録"
                     button-color="pink"
                     :is-large='true'
                     :height=50
                     font="large-button"
-                >
-                </button-event>
+                    >
+                    </button-event>
+                </a>
 
             </v-col>
         </v-row>
@@ -95,8 +94,6 @@
                 </v-col>
             @endforeach
         </v-row>
-
-
 
         <v-row>
 

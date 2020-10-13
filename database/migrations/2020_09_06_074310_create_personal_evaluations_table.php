@@ -16,11 +16,11 @@ class CreatePersonalEvaluationsTable extends Migration
         Schema::create('personal_evaluations', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('sake_id')->comment('酒ID');
-            $table->unsignedSmallInteger('sweetness')->comment('甘さ');
-            $table->unsignedSmallInteger('acidity')->comment('酸味');
-            $table->unsignedSmallInteger('richness')->comment('味の濃さ');
-            $table->unsignedSmallInteger('cost_performance')->comment('コストパフォーマンス');
-            $table->unsignedSmallInteger('recommend_point')->comment('おすすめ度');
+            $table->smallInteger('sweetness')->comment('甘さ');
+            $table->smallInteger('acidity')->comment('酸味');
+            $table->smallInteger('richness')->comment('味の濃さ');
+            $table->smallInteger('cost_performance')->comment('コストパフォーマンス');
+            $table->smallInteger('recommend_point')->comment('おすすめ度');
             $table->text('comment')->nullable()->comment('コメント');
             $table->timestamps();
             $table->softDeletes();

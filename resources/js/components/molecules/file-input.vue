@@ -13,11 +13,11 @@
             :font="font"
             >
             </button-event>
-        </v-col> 
+        </v-col>
         <v-col cols="10">
             <file-input-tag
             :name="name"
-            :files="files"
+            v-model="value"
             ></file-input-tag>
         </v-col>
 
@@ -26,13 +26,19 @@
 
 </template>
 
-<script> 
+<script>
   export default {
-    props: ["name","buttonText","files","font",
-    "buttonColor"],
-    // data(){
-    //     return [];
-    // },
+    props: ["name","buttonText","font",
+    "buttonColor","value"],
+    data(){
+        return{
+
+        }
+    },
+    created(){
+        console.log('bbbbbbbbbbbbb');
+        console.log(this.$props.value);
+    },
     methods: {
         decreaseInput(){
             console.log('comecomecomexome');

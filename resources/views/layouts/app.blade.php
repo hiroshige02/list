@@ -25,6 +25,10 @@
         @yield('contents')
         {{-- ログインアイコン --}}
         <a href="#" class="login-icon"></a>
+
+        {{-- ログイン画面のリンク--}}
+        <img class="login-link" src="/storage/app/public/img/display/login.jpg">
+
     </div>
     {{--
     <script src="{{ mix('/js/app.js') }}"></script>

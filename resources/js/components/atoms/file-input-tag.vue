@@ -2,7 +2,7 @@
     <div>
 
         <v-file-input
-        v-model="files"
+        :value="value"
         color="pink accent-4"
         counter
         label=""
@@ -38,8 +38,8 @@
     </div>
 </template>
 
-<script> 
+<script>
   export default {
-    props: ["name","errorMessages","files"]
+    props: ["name","errorMessages","file","value"]
   }
 </script>

@@ -42,6 +42,7 @@ Vue.component('label-text', require('./components/molecules/label-text.vue').def
 Vue.component('label-text-area', require('./components/molecules/label-text-area.vue').default);
 Vue.component('pagenation', require('./components/molecules/pagenation.vue').default);
 Vue.component('pulldown-event', require('./components/molecules/pulldown-event.vue').default);
+Vue.component('modal', require('./components/molecules/modal.vue').default);
 
 //organisms
 Vue.component('carousel-list', require('./components/organisms/carousel-list.vue').default);
@@ -50,6 +51,7 @@ Vue.component('text-component', require('./components/organisms/text-component.v
 Vue.component('list-index', require('./components/organisms/list-index.vue').default);
 Vue.component('radar-chart', require('./components/organisms/radar-chart.vue').default);
 Vue.component('coordinate-pulldown', require('./components/organisms/coordinate-pulldown.vue').default);
+Vue.component('modal-link', require('./components/organisms/modal-link.vue').default);
 
 
 

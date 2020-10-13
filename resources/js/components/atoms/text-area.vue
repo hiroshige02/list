@@ -1,17 +1,17 @@
 <template>
     <div>
         <v-textarea
-            outlined
-            :name="name"
-            :label="label"
-            :placeholder="placeholder"
-            :value="value"
-            :color="color"
+        outlined
+        :name="name"
+        :label="label"
+        :placeholder="placeholder"
+        :value="value"
+        :color="color"
         ></v-textarea>
     </div>
 </template>
 
-<script> 
+<script>
   export default {
     props: ['name','label','value','placeholder','color'],
     data() {
