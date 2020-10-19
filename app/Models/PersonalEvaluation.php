@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Models\PersonalEvaluation
@@ -33,6 +34,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class PersonalEvaluation extends Model
 {
+    use SoftDeletes;
+
     protected $table = 'personal_evaluations';
 
     protected $dates = [
@@ -44,4 +47,17 @@ class PersonalEvaluation extends Model
     protected $guarded = [
         'id', 'created_at', 'updated_at'
     ];
+
+    // /**
+    // この程度ならメソッド化不要？
+    //  * 酒IDと結びつく個人評価を返す
+    //  *
+    //  * @param int $sake_id
+    //  * @return \App\Models\user\PersonalEvaluation
+    //  */
+    // public static function getEvaluationFromSakeId($sake_id){
+    //     return PersonalEvaluation::whereSakeId($sake_id);
+    // }
+
+
 }

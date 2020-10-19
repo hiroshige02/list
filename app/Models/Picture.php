@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Models\Picture
@@ -23,6 +24,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Picture extends Model
 {
+
+    use SoftDeletes;
+
     protected $table = 'pictures';
 
     protected $dates = [

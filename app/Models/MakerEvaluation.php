@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Models\PersonalEvaluation
@@ -28,6 +29,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class MakerEvaluation extends Model
 {
+    use SoftDeletes;
+
     protected $table = 'maker_evaluations';
 
     protected $dates = [
