@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Services\SakeService;
 use App\Models\MakerEvaluation;
 
+use App\Services\PictureService;
 use App\Models\PersonalEvaluation;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -30,16 +31,32 @@ class SakeController extends Controller
     protected $sakeService;
 
     /**
+     * Pictureサービス
+     *
+     * @var \App\Services\PictureService
+     */
+    protected $pictureService;
+
+    /**
      * コンストラクタ
      *
      * @param SakeService $sakeService
+     * @param PictureService $pictureService
      */
-    public function __construct(SakeService $sakeService)
+    public function __construct(SakeService $sakeService, PictureService $pictureService)
     {
         $this->sakeService = $sakeService;
+        $this->pictureService = $pictureService;
     }
 
 
+    /**
+     * コンストラクタ
+     *
+     * @param int $sakeService
+     * @return void
+     *
+     */
     public function prefectureIndex($prefecture)
     {
         // if(!empty($id)){
@@ -48,15 +65,32 @@ class SakeController extends Controller
         $prefecture_keys = array_keys(MasterDefine::PREFECTURES);
 
         if (!in_array($prefecture, $prefecture_keys)) {
-            return;
+            //エラー処理
         }
 
         $prefecture = MasterDefine::PREFECTURES[$prefecture];
         // if($prefecture_id == 1){
         $viewData = [];
         $viewData['title'] = $prefecture . 'のお酒';
+
+        $sakes = Sake::wherePrefecture($prefecture)->get();
+
+        foreach($sakes as $sake){
+            $pictures = Picture::whereSakeId($sake->id)->get();
+            $image_paths = [];
+            foreach ($pictures as $picture) {
+                $image_paths[] = $picture->image_path;
+            }
+
+            $datas = [
+                'sake_id' => $sake->id,
+                'image_path' => $image_paths
+            ];
+        }
+
+        $viewData['datas'] = $datas;
+
         return view('maintenance.sake-index', $viewData);
-        // }
     }
 
     /**
@@ -97,18 +131,28 @@ class SakeController extends Controller
      */
     public function create(Request $request)
     {
+
         $user_id = Auth::user()->id;
 
         $viewData = [];
-        $files=[];
+
+        //戻る or リダイレクトの時にstorage内の仮ディスクを呼び出して格納。
+        $images=[];
 
         //画像データ取得のために
-        if (!empty($request->session()->get('preserve'))) {
-            $files = Storage::disk('public')->files("img/tmp/{$user_id}");
+        $flag = false;
 
-            foreach ($files as &$file) {
-                $file = basename($file);
-            }
+        $old_input = null;
+        $old_prefecture = null;
+
+        //リダイレクトした時と戻るの時
+        if (!empty($request->session()->get('preserve'))) {
+            $old_input = $request->old();
+            $flag = true;
+            $images = $this->pictureService->getTentativeImageData($user_id);
+        }else{
+            //最初の遷移時には仮ディスクの画像は全て消去する
+            $this->pictureService->deleteTentativeImageData($user_id);
         }
 
         //確認画面から戻ってき時に画像の仮フォルダを削除
@@ -116,19 +160,14 @@ class SakeController extends Controller
         $viewData['title'] = '新規登録';
         $viewData['sake_info'] = $this->sakeService->getSakeOptions();
 
-        $old_input = null;
-        if(!empty($request->old())){
-            $old_input = $request->old();
+        if(!empty($old_input['prefecture'])){
+            $old_prefecture = $old_input['prefecture'];
         }
 
-        $flag = false;
-        if(!empty($request->session()->get('preserve'))){
-            $flag = true;
-        }
         $viewData['tasts'] = $this->sakeService->getTasteOptions($old_input);
         $viewData['evaluations'] = $this->sakeService->getMakerEvaluations($old_input,$flag);
-        $viewData['prefecture'] = $this->sakeService->getPrefectureOptions($old_input,$flag);
-        $viewData['input_images'] = $files;
+        $viewData['prefecture'] = $this->sakeService->getPrefectureOptions($old_prefecture,$flag);
+        $viewData['input_images'] = $images;
 
         return view('maintenance.sake-create', $viewData);
     }
@@ -137,19 +176,26 @@ class SakeController extends Controller
     {
         $rules = [
             'name' => ['required','string','max:256'],
-            'name_kana' => ['required','string','max:256','regex:/^[ァ-ヶー]+$/'],
-            'kura' => ['required','string'],
-            'prefecture' => ['required','string'],
-            'sweetness' => ['required','string'],
-            'acidity' => ['required','string'],
-            'richness' => ['required','string'],
-            'cost_performance' => ['required','string'],
-            'recommend_point' => ['required','string'],
+            // 'name_kana' => ['required','string','max:256','regex:/^[ァ-ヶー]+$/'],
+            // 'kura' => ['required','string'],
+            // 'prefecture' => ['required','string'],
+            // 'sweetness' => ['required','string'],
+            // 'acidity' => ['required','string'],
+            // 'richness' => ['required','string'],
+            // 'cost_performance' => ['required','string'],
+            // 'recommend_point' => ['required','string'],
 
-            'sake_degree' => ['string'],
-            'amino_acid_degree' => ['string'],
+            // 'sake_degree' => ['string'],
+            // 'amino_acid_degree' => ['string'],
 
-            'memo' => ['string','max:1000']
+            // 'memo' => ['string','max:1000']
+
+            //
+            // 'file' => ['nullable','mimes:jpeg,png,jpg,gif,bmb','max:2048'],
+            // 'file' => 'nullable|mimes:jpeg,png,jpg,gif,bmb|max:2048',
+            // 'file' => ['file','mimes:jpeg,png,jpg,bmb','max:2048'],
+            // 'file' => 'mimes:jpeg,png,bmb',
+            // 'file' => 'file',
         ];
 
         return $rules;
@@ -173,12 +219,23 @@ class SakeController extends Controller
      */
     function createConfirm(Request $request)
     {
+        $user_id = Auth::user()->id;
+        $files = [];
 
         //バリデーション
         $validator = Validator::make($request->all(),
         $this->getSakeValidationRules(),$this->customMessages());
+
+        if (!empty($request->file('file'))) {
+            //上記メソッドでバリデーションを通過した画像は仮ディスクに保管される
+            $validator = $this->pictureService->validateStoreImage($user_id,$request->file('file'),$validator);
+        }
+
+        // var_dump($validator->errors());exit;で出るのみ下のかっこの中に入らない！なぜ？？
+
         if ($validator->fails()) {
-            // var_dump($validator->errors());exit;
+            //バリデーション を通過した画像はリダイレクト先で表示する。そのためのサイン
+            $request->session()->flash('preserve', true);
             return redirect('/maintenance/sake/create')->withInput()
             ->withErrors($validator);
         }
@@ -203,30 +260,12 @@ class SakeController extends Controller
             }
         }
 
+        //確認画面のモーダル用のデータを取得
+        $new_images = $this->pictureService->getTentativeImageData($user_id, true);
 
-        $files = [];
-        $user_id = Auth::user()->id;
-        $files = [];
-        if(!empty(Storage::disk('public')->exists("img/tmp/{$user_id}"))){
-            $storage_files = Storage::disk('public')->files("img/tmp/{$user_id}");
-            foreach($storage_files as &$f){
-                $f = basename($f);
-            }
-            $files = $storage_files;
-        }
-
-        //postされた画像があれば、仮ディスクに保存
-        if(!empty($request->file('file'))){
-            foreach ($request->file('file') as $file) {
-                $file_name = $file->getClientOriginalName();//BBQ.jpg
-                $files[] = $file_name;
-                $user_id = Auth::user()->id;
-                $path = $file->storeAs("/img/tmp/{$user_id}", $file_name, ['disk' => 'public']);
-            }
-        }
-
+        $viewData['user_id'] = $user_id;
         $viewData['datas'] = $datas;
-        $viewData['files'] = $files;
+        $viewData['new_images'] = $new_images;
 
         return view('maintenance.sake-create-confirm', $viewData);
     }
@@ -302,7 +341,7 @@ class SakeController extends Controller
             $maker->save();
 
             //仮ディスクを削除
-            Storage::disk('public')->deleteDirectory("img/tmp/{{$user_id}}");
+            $this->pictureService->deleteTentativeImageData($user_id);
 
         });
 
@@ -316,26 +355,268 @@ class SakeController extends Controller
     }
 
 
-    function edit($id){
+    function edit($id,Request $request){
+        // return view('errors.404', ['title' => 'ご指定のページが見つかりません']);
+        // abort(404, 'Not Found');
+        // throw new \Exception("testです");
+        // var_dump($request->old());exit;
+
         //該当ID酒の存在チェック
+        $sake = Sake::find($id);
+        if(empty($sake)){
+            var_dump('eieoio');exit; //エラーハンドリング必要
+        }
+
+        $sake_id = $sake->id;
+        $user_id = Auth::user()->id;
+        $personal = PersonalEvaluation::whereSakeId($sake_id)->first();
+        $maker = MakerEvaluation::whereSakeId($sake_id)->first();
 
         $viewData = [];
+
+        //画像データ取得のために
+        $flag = false;
+
+        $tentative_images = [];
+        $delete_image_ids = [];
+        if (!empty($request->session()->get('preserve'))) {
+            // var_dump($request->old());exit;
+            $flag = true;
+            $tentative_images = $this->pictureService->getTentativeImageData($user_id);
+            if (!empty($request->old('delete_image_ids'))) {
+                $delete_image_ids = $request->old('delete_image_ids');
+                // $request->session()->flassh('delete_image_ids',$delete_image_ids);
+            }
+        }
+
         $viewData['title'] = '編集';
-        // $viewData['page_number'] = 1;
+
+        $old_input = null;
+        if(!empty($request->old())){
+            $old_input = $request->old();
+        }
+
+        $viewData['sake_info'] = $this->sakeService->getSakeOptions($sake);
+        $viewData['sake_id'] = $id;
+        $viewData['user_id'] = $user_id;
+
+        $viewData['tasts'] = $this->sakeService->getTasteOptions($old_input,$personal);
+        $viewData['evaluations'] = $this->sakeService->getMakerEvaluations($old_input,$flag,$maker,'edit');
+
+        $old_prefecture = null;
+
+        if(!empty($old_input['prefecture'])){
+            $old_prefecture = $old_input['prefecture'];
+        }
+
+        $viewData['prefecture'] = $this->sakeService->getPrefectureOptions($old_prefecture,$flag,$sake['prefecture'],'edit');
+
+        $memo = $sake->memo;
+        if(!empty($old_input['memo'])){
+            $memo = $old_input['memo'];
+        }
+
+        $viewData['memo'] = $memo;
+
+        $images = $this->pictureService->getS3ImageData($id,$delete_image_ids);
+        // var_dump($images);exit;
+
+        $viewData['image_datas'] = $images;
+        $viewData['delete_image_ids'] = $delete_image_ids;
+        $viewData['tentative_images'] = $tentative_images;
 
         return view('maintenance.sake-edit', $viewData);
     }
 
 
-    function editConfirm(){
+    function editConfirm($id, Request $request){
+        // var_dump($request->post());exit;
+        $user_id = Auth::user()->id;
+        $validator = Validator::make($request->all(),
+        $this->getSakeValidationRules(),$this->customMessages());
+
+        if(!empty($request->file('file'))){
+            $validator = $this->pictureService->validateStoreImage($user_id,$request->file('file'),$validator);
+        }
+
+        if ($validator->fails()) {
+            $request->session()->flash('preserve', true);
+            return redirect('/maintenance/sake/create')->withInput()
+            ->withErrors($validator);
+        }
+
         $viewData = [];
         $viewData['title'] = '編集確認';
+
+        $user_id = Auth::user()->id;
+        $viewData['user_id'] = $user_id;
+
+        $delete_ids = $request->get('delete_image_ids') ? $request->get('delete_image_ids'):[];
+
+        if (!empty($request->get('redirect_delete_image_ids'))) {
+            $delete_ids = array_merge($delete_ids,$request->get('redirect_delete_image_ids'));
+        }
+
+        $exist_images = $this->pictureService->getS3ImageData($id, $delete_ids, true);
+        // var_dump($exist_images);exit; //12
+        // var_dump($exist_images);exit; //8,15
+
+        $viewData['delete_image_ids'] = $delete_ids;
+        //このidとmerged_delete_idsとの付き合わせを行う
+        if (count($delete_ids) > 0) {
+            foreach ($exist_images as $key => $i) {
+                if (in_array($i['id'], $delete_ids)) {
+                    continue;
+                }
+                unset($i);
+                unset($i);
+            }
+        }
+
+        $new_images = $this->pictureService->getTentativeImageData($user_id,true);
+
+        $datas = $this->sakeService->getConfirmColumns();
+
+        $i = 0;
+        foreach ($datas as $column => $post) {
+            if (!isset($post['pulldown'])) {
+                $datas[$column]['value'] = $request->get($column);
+            }else{
+                $pulldown_keys = array_keys($post['pulldown']);
+                //postした値が
+                $datas[$column]['value'] = null;
+
+                // var_dump($request->post());exit;
+
+                if($request->get($column) !== false && (!is_null($request->get($column)))
+                && (in_array($request->get($column), $pulldown_keys))){
+                    // var_dump($column);exit;
+                    // var_dump($request->get($column));exit;
+
+                    $datas[$column]['value'] = $post['pulldown'][$request->get($column)];
+                }
+            }
+        }
+
+        $viewData['datas'] = $datas;
+
+        $viewData['new_images'] = $new_images;
+        // var_dump($exist_images);exit;
+        $viewData['exist_images'] = $exist_images;
+        $viewData['sake_id'] = $id;
 
         return view('maintenance.sake-edit-confirm', $viewData);
     }
 
-    function editComplete(){
+    function update($id,Request $request){
+        // var_dump($request->post());exit;
+        //戻るボタン押下の際
+        $back = $request->post('back', false);
+        if($back !== false){
+            // var_dump($request->post());exit;
+            $request->session()->flash('preserve', true);
+            return redirect("/maintenance/sake/{$id}/edit")->withInput();
+        }
+
+        //バリデ〜ション
+        $validator = Validator::make($request->all(),
+        $this->getSakeValidationRules());
+        if ($validator->fails()) {
+            // var_dump($validator->errors());exit;
+            return redirect("/maintenance/sake/{$id}/edit")->withInput()
+            ->withErrors($validator);
+        }
+
+        $sake  = Sake::find($id);
+        if(empty($sake)){
+            //エラー処理
+        }
+        $sake->name = $request->get('name');
+        $sake->name_kana = $request->get('name_kana');
+        $sake->name_kana = $request->get('name_kana');
+        $sake->kura = $request->get('kura');
+        $sake->memo = $request->get('memo');
+        //post値をキーに置き換えるような
+        $sake->prefecture = array_search($request->post('prefecture'),MasterDefine::PREFECTURES);
+
+        $sake_id = $sake->id;
+
+        $personal = PersonalEvaluation::whereSakeId($sake_id)->first();
+        if(!empty($personal_evaluation)){
+            //エラー処理
+        }
+
+        $personal->sweetness = $request->post('sweetness');
+        $personal->acidity = $request->post('acidity');
+        $personal->richness = $request->post('richness');
+        $personal->cost_performance = $request->post('cost_performance');
+        $personal->recommend_point = $request->post('recommend_point');
+
+        // var_dump($sake->memo);exit;
+
+        $maker = MakerEvaluation::whereSakeId($sake_id)->first();
+        $maker->sake_degree = array_search($request->post('sake_degree'),MasterDefine::SAKE_DEGREES);
+        $maker->amino_acid_degree = array_search($request->post('amino_acid_degree'),MasterDefine::AMINO_ACID_DEGREES);
+
+        $user_id = Auth::user()->id;
+
+        $delete_ids = [];
+        if (!empty($request->get('delete_image_ids'))) {
+            $delete_ids = $request->get('delete_image_ids');
+
+            //酒と結びついたPictureかどうか確認。一つでもあったらエラー
+            foreach($delete_ids as $d_id){
+                $picture = Picture::find($d_id);
+                if(empty($picture) || ($picture->sake_id != $id)){
+                    //エラー処理
+                    var_dump('NOT RELATED error!!');
+                }
+            }
+        }
+
+
+
+        //トランザクション開始
+        DB::transaction(function () use ($id,$sake,$personal,$maker,$request,$user_id,$delete_ids) {
+            $sake->update();
+
+            if(Storage::disk('public')->exists("img/tmp/{$user_id}")){
+                $file_paths = Storage::disk('public')->files("img/tmp/{$user_id}");
+                // var_dump($file_paths);exit; //array(1) { [0]=> string(21) "img/tmp/1/english.jpg" }
+                foreach($file_paths as $f){
+                    $path = Storage::disk('s3')->putFile('sake', 'storage/app/public/' . $f, 'public');
+
+                    $picture = new Picture;
+                    $picture->image_path = Storage::disk('s3')->url($path);
+                    $picture->sake_id = $id;
+                    $picture->save();
+                }
+            }
+
+            $personal->update();
+            $maker->update();
+
+            foreach($delete_ids as $d_id){
+                $picture =  Picture::find($d_id);
+                // var_dump($picture);exit;
+
+                Storage::disk('s3')->delete('/', $picture->image_path);
+                $picture->delete();
+            }
+
+            //仮ディスクを削除
+            Storage::disk('public')->deleteDirectory("img/tmp/{$user_id}");
+
+        });
+        // var_dump(PersonalEvaluation::find(12)->sweetness);exit;
+
+
+        // 二重送信対策
+        $request->session()->regenerateToken();
+
         $viewData = [];
+        $viewData['sake_id'] = $sake_id;
+
         $viewData['title'] = '編集完了';
         // 更新のための処理
 
@@ -351,13 +632,26 @@ class SakeController extends Controller
     public function tentativeImageDelete(Request $request){
         Log::debug('@@@@@@@@ post tentativeDelete @@@@@@@@');
         Log::debug(print_r($request->post(),true));
+        Log::debug($request->post('delete_picture_id'));
+
         $user_id = $request->get('user_id');
         $image_source = $request->get('image_source');
+
+        //createの時
+        if(!empty($request->post('create_flag'))){
+
+            //ここ確かめる
+            Log::debug('create IS!!!!!');
+            $image_name = basename($image_source);
+            Storage::disk('public')->delete("img/tmp/{$user_id}/{$image_name}");
+
+        }
+
+        return;
+
         // [image_address] => /storage/app/public/img/tmp/1/moviefilm.jpg
         // $request->get('image_address')
 
-        $image_name = basename($image_source);
-        Storage::disk('public')->delete("img/tmp/{$user_id}/{$image_name}");
         // Storage::delete($request->get('image_name'));
         // Storage::disk('public')->deleteDirectory("img/tmp/{$user_id}");
     }

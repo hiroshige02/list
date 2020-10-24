@@ -19,4 +19,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 // 仮ディスク中の画像を削除
-Route::post('/tentativeimage/delete', 'Maintenance\SakeController@tentativeImageDelete');
+Route::post('/tentative_image/delete', 'Maintenance\SakeController@tentativeImageDelete');

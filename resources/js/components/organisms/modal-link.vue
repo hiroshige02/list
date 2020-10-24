@@ -1,14 +1,22 @@
 <template>
     <div>
-        <a @click="openModal()" :src="file" ref="modalLink" alt="Card image">{{file}}</a>
-        <modal
-        :img-name="file"
-        :user-id="userId"
-        v-show="showContent"
-        @close="closeModal"
-        @deleteLink="deleteLinkImage"
-        >
-        </modal>
+        <v-col cols="12" ref="modalLink" >
+            <a @click="openModal()" :src="imagePath" alt="">
+                <img :src="imagePath" alt="">
+            </a>
+
+            <modal
+            :path="imagePath"
+            :image-id="imageId"
+            :user-id="userId"
+            v-show="showContent"
+            :create-flag="createFlag"
+            :confirm-flag="confirmFlag"
+            @close="closeModal"
+            @deleteLink="deleteLinkImage"
+            >
+            </modal>
+        </v-col>
     </div>
 </template>
 
@@ -17,14 +25,33 @@
     props: ["file","userId"],
     data(){
         return{
-            showContent: false
+            showContent: false,
+            imagePath: '',
+            imageId: '',
+            createFlag: undefined,
+            confirmFlag: undefined,
         }
     },
     created(){
-        console.log('modal file :' + this.$props.file);
+        var parseFile = JSON.parse(this.$props.file);
+        if(parseFile['create_flag'] != undefined){
+            this.$data.imagePath = `/storage/app/public/img/tmp/${this.$props.userId}/${parseFile['path']}`;
+            this.$data.createFlag = true;
+        }else{
+            this.$data.imagePath = parseFile['path'];
+        }
+
+        if(parseFile['confirm_flag'] != false){
+            this.$data.confirmFlag = parseFile['confirm_flag'];
+        }
+
+        if(parseFile['id']){
+            this.$data.imageId = parseFile['id'];
+        }
+
     },
     methods: {
-        openModal(file){
+        openModal(){
             //リンククリックでモーダルオープン
             this.$data.showContent = true;
         },

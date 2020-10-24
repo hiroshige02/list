@@ -49,26 +49,4 @@ use Illuminate\Database\Eloquent\SoftDeletes;
         'id', 'created_at', 'updated_at'
     ];
 
-    /**
-     * 酒IDに結びつくS3の画像データを取得する
-     *
-     * @param int $sake_id
-     * @return array $image_datas
-     *
-     */
-    public static function getS3ImageData($sake_id){
-        $image_datas = [];
-
-        $images = Picture::whereSakeId($sake_id)->get();
-        if (!empty($images)) {
-            foreach ($images as $image) {
-                $image_datas[] = [
-                    'id' => $image->id,
-                    'path' => $image->image_path,
-                ];
-            }
-        }
-        return $image_datas;
-    }
-
 }

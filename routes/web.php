@@ -32,15 +32,14 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('/maintenance/sake',
         '\App\Http\Controllers\Maintenance\SakeController',
         ['only'=>['create','store',
-    'edit','editconfirm','update',
+    'edit','update',
     'show','index']]
     );
     // Route::get('/maintenance/sake/create', 'Maintenance\SakeController@create');
     // Route::post('/maintenance/sakee/moemoe', 'Maintenance\SakeController@moemoe')->name('moemoe');
     Route::post('/maintenance/sake/createconfirm', 'Maintenance\SakeController@createConfirm')->name('createconfirm');
     Route::post('/maintenance/sake/createcomplete', 'Maintenance\SakeController@createComplete')->name('createcomplete');
-    Route::post('/maintenance/sake/{$id}/editconfirm', 'Maintenance\SakeController@editConfirm')->name('editconfirm');
-    ;
+    Route::post('/maintenance/sake/{id}/editconfirm', 'Maintenance\SakeController@editConfirm')->name('editconfirm');
 
     // ログインしてない人
     Route::get('/sake/{id}', 'Viewer\SakeController@show');

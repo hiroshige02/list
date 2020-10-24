@@ -82,7 +82,7 @@ return [
         'string' => 'The :attribute may not be greater than :max characters.',
         'array' => 'The :attribute may not have more than :max items.',
     ],
-    'mimes' => 'The :attribute must be a file of type: :values.',
+    'mimes' => ':attributeは:valuesのいずれかの形式にしてください',
     'mimetypes' => 'The :attribute must be a file of type: :values.',
     'min' => [
         'numeric' => 'The :attribute must be at least :min.',
@@ -154,10 +154,13 @@ return [
         'prefecture' => '県',
         'kura' => '蔵名',
         'sweetness' => '甘さ',
-        'sour_taste' => '酸味',
+        'acidity' => '酸味',
         'richness' => '濃醇',
         'cost_performance' => 'コストパフォーマンス',
-        'recommend_point' => 'おすすめ度'
+        'recommend_point' => 'おすすめ度',
+        'sake_degree' => '日本酒度',
+        'amino_acid_degree' => 'アミノ酸度',
+        'file' => '画像',
     ],
 
 ];

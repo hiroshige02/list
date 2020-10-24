@@ -3,7 +3,6 @@
         <v-main>
 
             @extends('layouts.maintenance')
-
             @section('contents')
 
             <v-container>
@@ -30,12 +29,14 @@
                         </v-col>
                         <v-spacer></v-spacer>
                     </v-col>
-                    @foreach($files as $file)
-                        <v-col cols=12 class="d-flex">
-                            <v-spacer></v-spacer>
-                            <v-col cols=9>
-                                <label>{{$file}}</label>
-                            </v-col>
+
+                    @foreach($new_images as $image)
+                        <v-col cols="12">
+                            <modal-link
+                            file='@json($image)'
+                            user-id = "{{ $user_id }}"
+                            >
+                            </modal-link>
                         </v-col>
                     @endforeach
 
@@ -47,7 +48,7 @@
                     <v-col cols="12" class="text-center">
                         <button-event
                         type="submit"
-                        button-text='登録確認'
+                        button-text='登録'
                         button-color="pink"
                         :is-normal='true'
                         height="56px"

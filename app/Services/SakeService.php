@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\MasterDefine;
+use Illuminate\Http\File;
 use Illuminate\Http\Request;
 
 class SakeService
@@ -37,96 +38,104 @@ class SakeService
 
 
     /**
-     *  このメソッド変更する
+     *  個人評価入力のためのデータを取得
      *
+     * @param array|null $old_input
+     * @param App\Models\PersonalEvaluation|null $personal
      */
-    public function getTasteOptions($old_input){
-        if(!is_null($old_input)){
-            // var_dump($old_input['sweetness']);exit;
-            return [
-                'sweetness' => [
-                    'label' => '甘さ', //対は辛さ
-                    'selections' => $this->tastePoint('A'),
-                    'input_old' => [
-                        'text' => $old_input['sweetness'],
-                        'value' => (int)$old_input['sweetness']
-                    ]
-                ],
-                'acidity' => [
-                    'label' => '酸味',
-                    'selections' => $this->tastePoint('B'),
-                    'input_old' => [
-                        'text' => $old_input['acidity'],
-                        'value' => (int)$old_input['acidity']
-                    ]
-                ],
+    public function getTasteOptions($old_input=null,$personal=null){
+        $tasts =  [
+            'sweetness' => [
+                'label' => '甘さ', //対は辛さ
+                'selections' => $this->tastePoint('A'),
+            ],
+            'acidity' => [
+                'label' => '酸味',
+                'selections' => $this->tastePoint('B'),
+            ],
 
-                'richness' => [
-                    'label' => '濃醇', //対は淡麗
-                    'selections' => $this->tastePoint('A'),
-                    'input_old' => [
-                        'text' => $old_input['richness'],
-                        'value' => (int)$old_input['richness'],
-                    ],
-                ],
-                'cost_performance' => [
-                    'label' => 'コストパフォーマンス',
-                    'selections' => $this->tastePoint('B'),
-                    'input_old' => [
-                        'text' => $old_input['cost_performance'],
-                        'value' => (int)$old_input['cost_performance']
-                    ],
-
-                ],
-                'recommend_point' => [
-                    'label' => 'おすすめ度',
-                    'selections' => $this->tastePoint('B'),
-                    'input_old' => [
-                        'text' => $old_input['recommend_point'],
-                        'value' => (int)$old_input['recommend_point']
-                    ],
-
-                ]
-            ];
-        }else{
-            return [
-                'sweetness' => [
-                    'label' => '甘さ', //対は辛さ
-                    'selections' => $this->tastePoint('A'),
-                ],
-                'acidity' => [
-                    'label' => '酸味',
-                    'selections' => $this->tastePoint('B'),
-                ],
-
-                'richness' => [
-                    'label' => '濃醇', //対は淡麗
-                    'selections' => $this->tastePoint('A'),
-                ],
-                'cost_performance' => [
-                    'label' => 'コストパフォーマンス',
-                    'selections' => $this->tastePoint('B'),
-                ],
-                'recommend_point' => [
-                    'label' => 'おすすめ度',
-                    'selections' => $this->tastePoint('B'),
-                ]
-            ];
-
-        }
-    }
-
-    public function getSakeOptions(){
-        return [
-            'name' => '酒名',
-            'name_kana' => '酒名(全角カタカナ)',
-            'kura' => '蔵名',
+            'richness' => [
+                'label' => '濃醇', //対は淡麗
+                'selections' => $this->tastePoint('A'),
+            ],
+            'cost_performance' => [
+                'label' => 'コストパフォーマンス',
+                'selections' => $this->tastePoint('B'),
+            ],
+            'recommend_point' => [
+                'label' => 'おすすめ度',
+                'selections' => $this->tastePoint('B'),
+            ]
         ];
+
+        //「戻る」やエラーリダイレクト時
+        if (!empty($old_input)) {
+            foreach(array_keys($tasts) as $column){
+                $tasts[$column]['value'] = [
+                    'text' => $old_input[$column],
+                    'value' => (int)$old_input[$column]
+                ];
+            }
+        }
+
+        //編集時
+        elseif(!empty($personal)){
+            foreach(array_keys($tasts) as $column){
+                $tasts[$column]['value'] = [
+                    'text' => $personal->{$column},
+                    'value' => (int)$personal->{$column}
+                ];
+            }
+        }
+
+        return $tasts;
     }
 
-    public function getPrefectureOptions($old_input,$flag){
+    /**
+     *
+     * 入力画面で必要なデータを取得
+     *
+     * @param App\Models\Sake|null $sake
+     * @return array $info
+     */
+    public function getSakeOptions($sake=null){
+        $info =  [
+            'name' => [
+                'label' => '酒名',
+            ],
+            'name_kana' => [
+                'label' => '酒名(全角カタカナ)',
+            ],
+            'kura' => [
+                'label' => '蔵名',
+            ],
+        ];
+
+        //編集時
+        if(!empty($sake)){
+            foreach(array_keys($info) as $column){
+                // var_dump($sake->name);exit;
+                $info[$column]['value'] = $sake->{$column};
+
+            }
+        }
+
+        return $info;
+    }
+
+    /**
+     *
+     * 入力画面で必要なデータを取得
+     *
+     * @param string|null $old_prefecture
+     * @param boolean $flag
+     * @param string|null $value
+     * @param string|null $edit
+     * @return array $prefecture
+     */
+    public function getPrefectureOptions($old_prefecture,$flag,$value=null,$edit=null){
         $prefecture_selections = [];
-        foreach(MasterDefine::PREFECTURES as $key => $prefecture){
+        foreach (MasterDefine::PREFECTURES as $key => $prefecture) {
             $prefecture_selections[] = [
                 'value' => $key,
                 'text' => $prefecture,
@@ -139,31 +148,39 @@ class SakeService
             'selections' => $prefecture_selections,
         ];
 
-        if (!empty($old_input['prefecture'])) {
-            // var_dump(empty($request->session()->flash('preserve')));exit;
+        $p_value = null;
 
-            //リダイレクトの時
-            if (empty($flag)) {
-                $prefecture['input_old'] = [
-                    'text' => MasterDefine::PREFECTURES[$old_input['prefecture']],
-                    'value' => (int)$old_input['prefecture']
-                ];
+        if(!empty($old_prefecture)) {
+            $p_value = $old_prefecture;
+        } elseif(!empty($value)){
+            $p_value = $value;
+        }
 
-            //戻るの時
-            } else {
-                $prefecture['input_old'] = [
-                    'text' => $old_input['prefecture'],
-                    'value' => array_search($old_input['prefecture'], MasterDefine::PREFECTURES)
-                ];
+        if (!empty($p_value) && empty($flag) && (empty($edit))
+        || (!empty($p_value) && empty($flag) && !empty($edit) )) {
+            // var_dump($p_value);exit;
+            $prefecture['value'] = [
+                'text' => MasterDefine::PREFECTURES[$p_value],
+                'value' => (int)$p_value
+            ];
 
-            }
+        //戻るの時
+        } elseif (!empty($p_value) && (empty($edit))
+        || (!empty($p_value) && !empty($flag) && !empty($edit))) {
+            $prefecture['value'] = [
+                'text' => $p_value,
+                'value' => array_search($p_value, MasterDefine::PREFECTURES)
+            ];
         }
 
         return $prefecture;
     }
 
-
-    public function getMakerEvaluations($old_input,$flag){
+    /**
+     *
+     *
+     */
+    public function getMakerEvaluations($old_input,$flag,$maker=null,$edit=null){
         $sake_degree_selections = [];
         foreach(MasterDefine::SAKE_DEGREES as $key => $degree){
             $sake_degree_selections[] = [
@@ -172,25 +189,9 @@ class SakeService
             ];
         }
         $sake_degree = [
-            'name' => 'sake_degree',
             'label' => MasterDefine::SAKE_DEGREE,
             'selections' => $sake_degree_selections,
         ];
-        if (!empty($old_input['sake_degree'])) {
-            //リダイレクトの時
-            if (empty($flag)) {
-                $sake_degree['input_old'] = [
-                    'text' => MasterDefine::SAKE_DEGREES[$old_input['sake_degree']],
-                    'value' => (int)$old_input['sake_degree']
-                ];
-            //戻るボタンの時
-            }else{
-                $sake_degree['input_old'] = [
-                    'text' => $old_input['sake_degree'],
-                    'value' => array_search($old_input['sake_degree'], MasterDefine::SAKE_DEGREES),
-                ];
-            }
-        }
 
         $acid_degree_selections = [];
         foreach(MasterDefine::AMINO_ACID_DEGREES as $key => $degree){
@@ -200,27 +201,66 @@ class SakeService
             ];
         }
         $amino_acid_degree = [
-            'name' => 'amino_acid_degree',
             'label' => MasterDefine::AMINO_ACID_DEGREE,
             'selections' => $acid_degree_selections,
         ];
-        if (!empty($old_input['amino_acid_degree'])) {
-            //リダイレクトの時
-            if (empty($flag)) {
-                $amino_acid_degree['input_old'] = [
-                    'text' => MasterDefine::AMINO_ACID_DEGREES[$old_input['amino_acid_degree']],
-                    'value' => (int)$old_input['amino_acid_degree']
-                ];
-            } else {
-                $amino_acid_degree['input_old'] = [
-                    'text' => $old_input['amino_acid_degree'],
-                    'value' => array_search($old_input['amino_acid_degree'], MasterDefine::AMINO_ACID_DEGREES)
-                ];
-            }
-        }
 
-        // var_dump($old_input['amino_acid_degree']);
-        return [$sake_degree, $amino_acid_degree];
+
+        $maker_evaluations = [
+            'sake_degree' => $sake_degree,
+            'amino_acid_degree' => $amino_acid_degree
+        ];
+
+        if (empty($flag) && (empty($edit))
+        || (empty($flag) && !empty($edit))) {
+                foreach (array_keys($maker_evaluations) as $column) {
+                    if ($column == 'sake_degree') {
+                        $master_array = MasterDefine::SAKE_DEGREES;
+                    } elseif ($column == 'sake_degree') {
+                        $master_array = MasterDefine::AMINO_ACID_DEGREES;
+                    }
+
+                    //これでうまくいったら$makerと$old_inputの処理をまとめられる
+                    $value = null;
+
+                    //0の時の扱いに困る
+                    if (!empty($maker)) {
+                        $value = (int)$maker[$column];
+                        $maker_evaluations[$column]['value'] = [
+                            'text' => $master_array[$value],
+                            'value' => (int)$value
+                        ];
+
+                    }
+                }
+            } elseif(!empty($flag) && (empty($edit))
+            || (!empty($flag) && (!empty($edit)))){
+
+                foreach (array_keys($maker_evaluations) as $column) {
+                    //メソッド化するしかないのか？？？
+                    if ($column == 'sake_degree') {
+                        $master_array = MasterDefine::SAKE_DEGREES;
+                    } elseif ($column == 'amino_acid_degree') {
+                        $master_array = MasterDefine::AMINO_ACID_DEGREES;
+                    }
+
+                    $value = null;
+                    if(!empty($old_input)){
+                        $value = $old_input[$column];
+                    }elseif(!empty($maker)){
+                        $value = $maker[$column];
+                    }
+
+                    if (!empty($value)) {
+                        $maker_evaluations[$column]['value'] = [
+                            'text' => $value,
+                            'value' => array_search($value, $master_array)
+                        ];
+                    }
+
+                }
+            }
+            return $maker_evaluations;
 
     }
 

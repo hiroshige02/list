@@ -15,7 +15,7 @@ class MasterDefine {
     const KYUSHU_AREA = 7;
 
 
-    //都道府県　絶対必要
+    //都道府県
     const HOKKAIDO = 0;
 
     const AOMORI = 1;
