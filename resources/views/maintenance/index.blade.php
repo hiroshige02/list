@@ -9,7 +9,7 @@
 
 <v-container>
 
-    <form method="POST" action="/maintenance/sake/search">
+    <form id="" method="POST" action="/maintenance/">
         @csrf
 
         <v-row>
@@ -108,10 +108,10 @@
                         <li id="{{ $area['name'] }}" onclick="displayToggle(this.id)">
                             {{ $area['display_name'] }}
                             <ul id="{{ $area['name'] }}_prefectures" class="hide">
-                                @foreach($area['prefectures'] as $p)
+                                @foreach($area['prefectures'] as $number => $p)
                                     {{-- /maintenance/sake/area/1 みたいなアドレス --}}
                                     <li>
-                                        <a href="maintenance/sake/area/1" class="link">{{ $p }}</a>
+                                        <a href="maintenance/sake/prefecture/{{$number}}" class="link">{{ $p }}</a>
                                     </li>
                                 @endforeach
                             </ul>

@@ -59,36 +59,42 @@ class SakeController extends Controller
      */
     public function prefectureIndex($prefecture)
     {
-        // if(!empty($id)){
-        // $sake = Sake::wherePrefectureId($prefecture_id)->get();
-        // }
         $prefecture_keys = array_keys(MasterDefine::PREFECTURES);
 
         if (!in_array($prefecture, $prefecture_keys)) {
             //エラー処理
         }
 
-        $prefecture = MasterDefine::PREFECTURES[$prefecture];
-        // if($prefecture_id == 1){
-        $viewData = [];
-        $viewData['title'] = $prefecture . 'のお酒';
-
         $sakes = Sake::wherePrefecture($prefecture)->get();
-
+        $datas = [];
         foreach($sakes as $sake){
-            $pictures = Picture::whereSakeId($sake->id)->get();
-            $image_paths = [];
-            foreach ($pictures as $picture) {
-                $image_paths[] = $picture->image_path;
-            }
+            $pictures = Picture::whereSakeId($sake->id)->first();
 
-            $datas = [
+            //現状画像一枚しか表示しないようになっている
+            $image_path = null;
+            if (!empty($pictures)) {
+                $image_path = $pictures->image_path;
+            }
+            // $image_path = [];
+            // foreach ($pictures as $picture) {
+            //     $image_paths[] = $picture->image_path;
+            // }
+
+            $datas[] = [
                 'sake_id' => $sake->id,
-                'image_path' => $image_paths
+                'name' => $sake->name,
+                'kura' => $sake->kura,
+                'image_path' => $image_path
             ];
         }
 
+        $viewData = [];
         $viewData['datas'] = $datas;
+
+        $prefecture_name = MasterDefine::PREFECTURES[$prefecture];
+        $viewData['title'] = $prefecture_name . 'のお酒';
+
+        // var_dump($viewData['datas']);exit;
 
         return view('maintenance.sake-index', $viewData);
     }
@@ -106,12 +112,6 @@ class SakeController extends Controller
         return view('maintenance.searched', $viewData);
     }
 
-    public function index()
-    {
-        $viewData = [];
-        $viewData['title'] = '千葉県のお酒';
-        return view('maintenance.sake-index', $viewData);
-    }
 
     public function show($id)
     {
@@ -380,12 +380,10 @@ class SakeController extends Controller
         $tentative_images = [];
         $delete_image_ids = [];
         if (!empty($request->session()->get('preserve'))) {
-            // var_dump($request->old());exit;
             $flag = true;
             $tentative_images = $this->pictureService->getTentativeImageData($user_id);
             if (!empty($request->old('delete_image_ids'))) {
                 $delete_image_ids = $request->old('delete_image_ids');
-                // $request->session()->flassh('delete_image_ids',$delete_image_ids);
             }
         }
 
@@ -430,7 +428,6 @@ class SakeController extends Controller
 
 
     function editConfirm($id, Request $request){
-        // var_dump($request->post());exit;
         $user_id = Auth::user()->id;
         $validator = Validator::make($request->all(),
         $this->getSakeValidationRules(),$this->customMessages());
@@ -458,8 +455,6 @@ class SakeController extends Controller
         }
 
         $exist_images = $this->pictureService->getS3ImageData($id, $delete_ids, true);
-        // var_dump($exist_images);exit; //12
-        // var_dump($exist_images);exit; //8,15
 
         $viewData['delete_image_ids'] = $delete_ids;
         //このidとmerged_delete_idsとの付き合わせを行う
@@ -483,10 +478,7 @@ class SakeController extends Controller
                 $datas[$column]['value'] = $request->get($column);
             }else{
                 $pulldown_keys = array_keys($post['pulldown']);
-                //postした値が
                 $datas[$column]['value'] = null;
-
-                // var_dump($request->post());exit;
 
                 if($request->get($column) !== false && (!is_null($request->get($column)))
                 && (in_array($request->get($column), $pulldown_keys))){
@@ -509,8 +501,7 @@ class SakeController extends Controller
     }
 
     function update($id,Request $request){
-        // var_dump($request->post());exit;
-        //戻るボタン押下の際
+        //戻るボタン押下
         $back = $request->post('back', false);
         if($back !== false){
             // var_dump($request->post());exit;
@@ -522,13 +513,15 @@ class SakeController extends Controller
         $validator = Validator::make($request->all(),
         $this->getSakeValidationRules());
         if ($validator->fails()) {
-            // var_dump($validator->errors());exit;
             return redirect("/maintenance/sake/{$id}/edit")->withInput()
             ->withErrors($validator);
         }
 
         $sake  = Sake::find($id);
         if(empty($sake)){
+
+
+
             //エラー処理
         }
         $sake->name = $request->get('name');
@@ -543,6 +536,8 @@ class SakeController extends Controller
 
         $personal = PersonalEvaluation::whereSakeId($sake_id)->first();
         if(!empty($personal_evaluation)){
+
+
             //エラー処理
         }
 
@@ -551,8 +546,6 @@ class SakeController extends Controller
         $personal->richness = $request->post('richness');
         $personal->cost_performance = $request->post('cost_performance');
         $personal->recommend_point = $request->post('recommend_point');
-
-        // var_dump($sake->memo);exit;
 
         $maker = MakerEvaluation::whereSakeId($sake_id)->first();
         $maker->sake_degree = array_search($request->post('sake_degree'),MasterDefine::SAKE_DEGREES);
@@ -582,7 +575,6 @@ class SakeController extends Controller
 
             if(Storage::disk('public')->exists("img/tmp/{$user_id}")){
                 $file_paths = Storage::disk('public')->files("img/tmp/{$user_id}");
-                // var_dump($file_paths);exit; //array(1) { [0]=> string(21) "img/tmp/1/english.jpg" }
                 foreach($file_paths as $f){
                     $path = Storage::disk('s3')->putFile('sake', 'storage/app/public/' . $f, 'public');
 
@@ -608,8 +600,6 @@ class SakeController extends Controller
             Storage::disk('public')->deleteDirectory("img/tmp/{$user_id}");
 
         });
-        // var_dump(PersonalEvaluation::find(12)->sweetness);exit;
-
 
         // 二重送信対策
         $request->session()->regenerateToken();
@@ -630,14 +620,13 @@ class SakeController extends Controller
     }
 
     public function tentativeImageDelete(Request $request){
-        Log::debug('@@@@@@@@ post tentativeDelete @@@@@@@@');
-        Log::debug(print_r($request->post(),true));
-        Log::debug($request->post('delete_picture_id'));
 
         $user_id = $request->get('user_id');
         $image_source = $request->get('image_source');
 
-        //createの時
+        //新たに画像を登録するｓ時
+
+        //そもそもpostしちゃいけないのでは？？要修正
         if(!empty($request->post('create_flag'))){
 
             //ここ確かめる
@@ -649,11 +638,6 @@ class SakeController extends Controller
 
         return;
 
-        // [image_address] => /storage/app/public/img/tmp/1/moviefilm.jpg
-        // $request->get('image_address')
-
-        // Storage::delete($request->get('image_name'));
-        // Storage::disk('public')->deleteDirectory("img/tmp/{$user_id}");
     }
 
 

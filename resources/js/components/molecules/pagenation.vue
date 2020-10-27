@@ -2,18 +2,18 @@
     <div>
     <v-pagination
     v-model="page"
-    :length="3"
+    :length="totalPages"
     color="pink"
     ></v-pagination>
     </div>
 </template>
 
-<script> 
+<script>
   export default {
-    props: ['length'],
+    props: ['totalPages','perPageS'],
     data () {
         return {
-            page: 1,
+            page: 2,
         }
     }
   }

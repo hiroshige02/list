@@ -11,7 +11,7 @@
                 <v-row justify="center">
 
                     <v-col cols="12" class="text-center">
-                        <a href="/maintenance/sake/{{$sake_id}}">
+                        <a href="/maintenance/sake/{{$sake_id}}/edit">
                             <button-event
                                 button-text='更新したお酒を見る'
                                 button-color="pink"
@@ -24,6 +24,7 @@
                         </a>
                     </v-col>
                     <v-col cols="12" class="text-center">
+                        <a href="/maintenance">
                             <button-event
                                 button-text='管理画面に移動'
                                 button-color="primary"
@@ -33,6 +34,7 @@
                                 font="large-button"
                             >
                             </button-event>
+                        </a>
                     </v-col>
                             <v-col cols="12" class="text-center">
                                 <a href="#" class="link">

@@ -1,59 +1,50 @@
 <template>
-<div>
-          <v-col
-            v-for="(item, i) in items"
-            :key="i"
-            cols="12"
-          >
+    <div>
+        <v-col
+        v-for="(sake, i) in sakes"
+        :key="i"
+        cols="12"
+        >
             <v-card
               color="white"
               class="d-inline-block mx-auto"
               width="100%"
             >
-              <div class="d-flex flex-no-wrap justify-space-between">
-                <v-avatar
-                  class="ma-3"
-                  size="125"
-                  tile
-                >
-                  <v-img :src="item.src"></v-img>
-                </v-avatar>
-
-                <div>
-                  <v-card-title
-                    class="headline"
-                    v-text="item.name"
-                  ></v-card-title>
-                  <v-card-title v-text="item.kura"></v-card-title>
+                <!-- <div class="d-flex flex-no-wrap justify-space-between"> -->
+                <div class="d-flex flex-no-wrap" justify="left">
+                    <v-avatar v-if="sake.image_path" class="ma-3" size="125" tile>
+                        <v-img :src="sake.image_path"></v-img>
+                    </v-avatar>
+                    <div>
+                        <v-card-title
+                            class="headline"
+                            v-text="sake.name"
+                        ></v-card-title>
+                        <v-card-title v-text="sake.kura">
+                        </v-card-title>
+                    </div>
                 </div>
-              </div>
             </v-card>
-          </v-col>
-  </div>
+        </v-col>
+    </div>
 </template>
 
 <script>
 
 export default {
-    props: ['buttonText','buttonColor','isNormal','isLarge'],
+    props: ['datas','buttonText','buttonColor','isNormal','isLarge'],
 
     data() {
-    return {
-        items: [{
-            // color: '#1F7087',
-            src: '/public/img/hiyoko.jpg',
-            name: 'さわ音あ',
-            kura: '小沢酒造',
-            },
-            {
-            // color: '#952175',
-            src: '/public/img/jazz.png',
-            name: '澤乃井',
-            kura: '小沢酒造',
-        }]
+        return {
+            sakes: [],
+        }
+    },
+    created(){
+        console.log(this.$props.datas);
+        console.log(JSON.parse(this.$props.datas));
+
+        this.$data.sakes = JSON.parse(this.$props.datas);
     }
 }
-}
-
 
 </script>
