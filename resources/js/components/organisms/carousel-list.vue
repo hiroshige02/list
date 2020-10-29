@@ -13,7 +13,28 @@
 </template>
 
 <script>
-export default { 
+export default {
     props: ['perPage'],
 }
 </script>
+
+<style>
+
+.VueCarousel{
+  height: 300px;
+}
+.VueCarousel-wrapper, .VueCarousel-inner, .VueCarousel-slide{
+  height: 100% !important;
+}
+.VueCarousel-slide .slider-inner {
+  height: 100%;
+  background-color: #62caaa;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  border: 2px solid #fff;
+  font-size: 30px;
+  border-radius: 10px;
+}
+</style>

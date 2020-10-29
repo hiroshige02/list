@@ -146,8 +146,8 @@ class MasterDefine {
                 MasterDefine::AOMORI => MasterDefine::PREFECTURES[MasterDefine::AOMORI],
                 MasterDefine::IWATE => MasterDefine::PREFECTURES[MasterDefine::IWATE],
                 MasterDefine::AKITA => MasterDefine::PREFECTURES[MasterDefine::AKITA],
-                MasterDefine::MIYAGI => MasterDefine::PREFECTURES[MasterDefine::YAMAGATA],
-                MasterDefine::YAMAGATA => MasterDefine::PREFECTURES[MasterDefine::MIYAGI],
+                MasterDefine::MIYAGI => MasterDefine::PREFECTURES[MasterDefine::MIYAGI],
+                MasterDefine::YAMAGATA => MasterDefine::PREFECTURES[MasterDefine::YAMAGATA],
                 MasterDefine::FUKUSHIMA => MasterDefine::PREFECTURES[MasterDefine::FUKUSHIMA]
             ]
         ],

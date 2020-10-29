@@ -4,16 +4,25 @@
     v-model="page"
     :length="totalPages"
     color="pink"
+    @input="clickPage"
     ></v-pagination>
     </div>
 </template>
 
 <script>
   export default {
-    props: ['totalPages','perPageS'],
+    props: ['totalPages','perPage'],
     data () {
         return {
-            page: 2,
+            page: 1,
+        }
+    },
+    created(){
+
+    },
+    methods: {
+        clickPage(pageNumber){
+            this.$emit('clickedPage', pageNumber)
         }
     }
   }
