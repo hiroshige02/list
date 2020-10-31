@@ -1,9 +1,25 @@
 <template>
     <div id="overlay" @click.self="cancelClick">
         <div id="modal-content">
-            <img :src="image">
+            <img :src="imagePath">
             <v-row>
-                <v-col cols=12 class="d-flex">
+
+                <v-col v-if="confirmFlag" cols=12 align="center">
+                    <v-col cols=6 @click="cancelClick">
+                        <!-- キャンセルボタン -->
+                        <button-event
+                        button-text='キャンセル'
+                        button-color="pink"
+                        :is-normal='true'
+                        height="56px"
+                        width="150spx"
+                        font="normal-button"
+                        >
+                        </button-event>
+                    </v-col>
+                </v-col>
+
+                <v-col v-else cols=12 class="d-flex">
                     <v-col cols=6 @click="deleteImage">
                         <!-- 削除ボタン -->
                         <button-event
@@ -30,6 +46,12 @@
                     </v-col>
                 </v-col>
 
+
+                <!-- ！！！！削除サインがつけられるのはこのコンポーネント内のidのみ！！！！ -->
+                <!-- ！！！！削除サインがつけられるのはこのコンポーネント内のidのみ！！！！ -->
+                <div v-for="id in deleteIds" :key="id">
+                    <input type="hidden" name="delete_image_ids[]" :value="id">
+                </div>
             </v-row>
 
         </div>
@@ -38,34 +60,61 @@
 
 <script>
   export default {
-    props: ['imgName','userId'],
+    props: ['path','userId','createFlag','confirmFlag','imageId'],
     data(){
         return {
-            image: `/storage/app/public/img/tmp/${this.$props.userId}/${this.$props.imgName}`,
-            user_id: this.$props.userId
+            imagePath: '',
+            deleteIds: [],
+
         }
     },
     created(){
-        console.log('modal.imgName : ' + this.$props.imgName);
+        //ここでcreateフラグを使ってthis.$data.imageにパスをセットする？？
+        // var parseFile = JSON.parse(this.$props.imgData);
+        console.log('******* CHECK *******');
+        console.log('this.$props.confirmFlag : ' + this.$props.confirmFlag);
+        console.log('createFlag : ' + this.$props.createFlag);
+        // console.log('deleteImageIds : ' + this.$props.deleteImageIds);
+
+        // if(this.$props.createFlag != undefined){
+        //     console.log('******* CREATE VERSION *******');
+        //     this.$data.imagePath = `/storage/app/public/img/tmp/${this.$props.userId}/${this.$props.path}`;
+        //     console.log('MODAL::this.$data.imagePath : ' + this.$data.imagePath);
+
+        //     return;
+        // }
+        this.$data.imagePath = this.$props.path;
     },
 
     methods: {
 
         deleteImage: function() {
-            axios.post('/api/tentativeimage/delete', {
-                'image_source': this.$data.image,
-                'user_id': this.$data.user_id
+            this.$emit('close');
+            this.$emit('deleteLink');
+
+            if(this.$props.imageId != undefined && this.$props.imageId != ''){
+                console.log('deleteImage deleteImage deleteImage');
+                console.log(this.$data.deleteIds);
+                console.log(this.$props.imageId);
+                this.$data.deleteIds.push(this.$props.imageId);
+
+                console.log(this.$data.deleteIds);
+                return;
+            }
+
+            axios.post('/api/tentative_image/delete', {
+                'image_source': this.$props.path,
+                'delete_picture_id': this.$props.imageId,
+                'user_id': this.$props.userId,
+                'create_flag': this.$props.createFlag
             },)
             .then(function(res) {
                 console.log('@@@@@@@@ post tentativeDelete @@@@@@@@');
-                // this.cancelClick();
+                this.cancelClick();
             }).catch(function(error){
                 console.log(error);
                 return;
             });
-
-            this.$emit('close');
-            this.$emit('deleteLink');
 
         },
         cancelClick: function(){

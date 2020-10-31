@@ -8,8 +8,11 @@ require('./bootstrap');
 
 window.Vue = require('vue');
 import Vuetify from 'vuetify';
+import VueCarousel from 'vue-carousel';
 import 'vuetify/dist/vuetify.min.css';
+
 Vue.use(Vuetify);
+Vue.use(VueCarousel);
 
 /**
  * The following block of code may be used to automatically register your
@@ -52,6 +55,7 @@ Vue.component('list-index', require('./components/organisms/list-index.vue').def
 Vue.component('radar-chart', require('./components/organisms/radar-chart.vue').default);
 Vue.component('coordinate-pulldown', require('./components/organisms/coordinate-pulldown.vue').default);
 Vue.component('modal-link', require('./components/organisms/modal-link.vue').default);
+Vue.component('items-pagenate', require('./components/organisms/items-pagenate.vue').default);
 
 
 

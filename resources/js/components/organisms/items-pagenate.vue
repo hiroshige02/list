@@ -4,6 +4,7 @@
             <v-col cols="12">
                 <list-index
                 :datas="lists"
+                :current-page="currentPage"
                 >
                 </list-index>
             </v-col>
@@ -29,6 +30,7 @@ export default {
     data() {
         return {
             lists: [],
+            currentPage: undefined,
         }
     },
     created(){
@@ -37,7 +39,7 @@ export default {
     },
     methods: {
         clickedPage(pageNumber){
-
+            this.$data.currentPage = pageNumber;
             let parsedData = JSON.parse(this.$props.datas);
             let perPage = this.$props.perPage
 

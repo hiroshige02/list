@@ -67,6 +67,10 @@ class SakeController extends Controller
 
         $sakes = Sake::wherePrefecture($prefecture)->get();
         $datas = [];
+
+        // var_dump(count($sakes));exit;
+
+
         foreach($sakes as $sake){
             $pictures = Picture::whereSakeId($sake->id)->first();
 
@@ -91,9 +95,16 @@ class SakeController extends Controller
         $viewData = [];
         $viewData['datas'] = $datas;
 
+        $per_page = 2;
+        $viewData['per_page'] = $per_page;
+
+        $total_pages = count($sakes) % $per_page ?
+        count($sakes)/$per_page : ceil(count($sakes)/$per_page);
+
+        $viewData['total_pages'] = $total_pages;
+
         $prefecture_name = MasterDefine::PREFECTURES[$prefecture];
         $viewData['title'] = $prefecture_name . 'のお酒';
-
         // var_dump($viewData['datas']);exit;
 
         return view('maintenance.sake-index', $viewData);
@@ -113,12 +124,26 @@ class SakeController extends Controller
     }
 
 
-    public function show($id)
+    public function show($sake_id,$page, Request $request)
     {
-        //該当ID酒の存在チェック
+
+        if(empty($sake_id)){
+            //エラー処理
+        }
+
+        $sake = Sake::find($sake_id);
+        if(empty($sake)){
+            //酒が存在しないエラー処理
+
+        }
+
+        $request->session()->put('page_number', $page);
 
         $viewData = [];
-        $viewData['title'] = 'さわ音';
+        $viewData['title'] = $sake->name;
+        $sake->prefecture = MasterDefine::PREFECTURES[$sake->prefecture];
+        $viewData['sake'] = $sake;
+        //カルーセルスライダーの画面上の表示枚数
         $viewData['set_per_page'] = 2;
 
         return view('maintenance.sake', $viewData);
@@ -427,7 +452,16 @@ class SakeController extends Controller
     }
 
 
-    function editConfirm($id, Request $request){
+    function editConfirm($id, Request $request)
+    {
+        //「戻る」クリック
+        $back = $request->post('back', false);
+        if ($back !== false) {
+            $page_number = $request->session()->get('page_number');
+            return redirect("/maintenance/sake/{$id}/{$page_number}");
+        }
+
+
         $user_id = Auth::user()->id;
         $validator = Validator::make($request->all(),
         $this->getSakeValidationRules(),$this->customMessages());
@@ -464,7 +498,9 @@ class SakeController extends Controller
                     continue;
                 }
                 unset($i);
-                unset($i);
+
+
+                //？？？？？？？？？？
             }
         }
 
@@ -504,7 +540,6 @@ class SakeController extends Controller
         //戻るボタン押下
         $back = $request->post('back', false);
         if($back !== false){
-            // var_dump($request->post());exit;
             $request->session()->flash('preserve', true);
             return redirect("/maintenance/sake/{$id}/edit")->withInput();
         }
