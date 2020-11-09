@@ -16,12 +16,11 @@
             <v-col cols=12>
                 <a href="/maintenance/sake/create">
                     <button-event
-                    button-text="新規登録"
+                    button-text="{{__('master.Register')}}"
                     button-color="pink"
                     :is-large='true'
                     :height=50
-                    font="large-button"
-                    >
+                    font="large-button">
                     </button-event>
                 </a>
 
@@ -35,7 +34,7 @@
                 </v-col>
                 <v-col cols=3>
                     <button-event
-                    button-text="検索"
+                    button-text="{{__('master.Search')}}"
                     button-color="primary"
                     is-normal='false'
                     :is-large='true'
@@ -56,7 +55,7 @@
             </v-col>
             <v-col class="text-center">
                 <a href="#" class="link">
-                    もっと見る
+                    {{__('master.More')}}
                 </a>
             </v-col>
 
@@ -65,8 +64,7 @@
         {{-- メーカーの評価 --}}
         <v-row class="pt-8">
             <v-col cols=12 justify="center">
-                    <h2 class="center">メーカーの評価から探す</h2>
-
+                <h2 class="center">{{__('master.SearchMakerEvaluation')}}</h2>
                     <coordinate-pulldown
                     :items='@json($maker_selections)'
                     >
@@ -78,7 +76,7 @@
         {{-- 個人の評価 --}}
         <v-row class="pt-8">
             <v-col cols=12 justify="center">
-                <h2 class="center">個人の評価から探す</h2>
+                <h2 class="center">{{__('master.SearchPersonalEvaluation')}}</h2>
             </v-col>
             @foreach($personal_selections as $column => $option)
                 <v-col cols=12 class="d-flex no-gutters">
@@ -98,7 +96,7 @@
         <v-row>
 
             <v-col cols=12 justify="center" class="no-gutters pt-8">
-                <h2 class="center">エリアから探す</h2>
+                <h2 class="center">{{__('master.SearchArea')}}</h2>
             </v-col>
 
             <v-col cols=12 class="no-gutters">
@@ -122,7 +120,7 @@
             </v-col>
         </v-row>
 
-        <button type="submit">送信</button>
+        <button type="submit">{{__('master.Submit')}}</button>
     </form>
 </v-container>
 

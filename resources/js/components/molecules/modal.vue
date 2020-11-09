@@ -45,13 +45,6 @@
                         </button-event>
                     </v-col>
                 </v-col>
-
-
-                <!-- ！！！！削除サインがつけられるのはこのコンポーネント内のidのみ！！！！ -->
-                <!-- ！！！！削除サインがつけられるのはこのコンポーネント内のidのみ！！！！ -->
-                <div v-for="id in deleteIds" :key="id">
-                    <input type="hidden" name="delete_image_ids[]" :value="id">
-                </div>
             </v-row>
 
         </div>
@@ -64,8 +57,7 @@
     data(){
         return {
             imagePath: '',
-            deleteIds: [],
-
+            deleteFlag: false,
         }
     },
     created(){
@@ -94,11 +86,11 @@
 
             if(this.$props.imageId != undefined && this.$props.imageId != ''){
                 console.log('deleteImage deleteImage deleteImage');
-                console.log(this.$data.deleteIds);
                 console.log(this.$props.imageId);
-                this.$data.deleteIds.push(this.$props.imageId);
+                // this.$data.deleteIds.push(this.$props.imageId);
+                this.$data.deleteFlag = true;
 
-                console.log(this.$data.deleteIds);
+                // console.log(this.$data.deleteIds);
                 return;
             }
 

@@ -29,7 +29,7 @@
 
                     <v-col cols=12 class="d-flex">
                         <v-col cols=3>
-                            <p>画像登録</p>
+                            <p>{{__('master.Picture')}}</p>
                         </v-col>
                         <v-spacer></v-spacer>
                     </v-col>
@@ -37,7 +37,7 @@
                     @if(!empty($exist_images))
                         <v-col cols=12 class="d-flex">
                             <v-col cols=4>
-                                <p>登録済画像</p>
+                                <p>{{__('master.RegisteredPicture')}}</p>
                             </v-col>
                             <v-spacer></v-spacer>
                         </v-col>
@@ -60,7 +60,7 @@
                     @if(!empty($new_images))
                         <v-col cols=12 class="d-flex">
                             <v-col cols=4>
-                                <p>新規登録画像</p>
+                                <p>{{__('master.NewPicture')}}</p>
                             </v-col>
                             <v-spacer></v-spacer>
                         </v-col>
@@ -82,7 +82,7 @@
                     <v-col cols="12" class="text-center">
                         <button-event
                         type="submit"
-                        button-text='更新'
+                        button-text='{{__('master.Update')}}'
                         button-color="pink"
                         :is-normal='true'
                         height="56px"
@@ -90,7 +90,7 @@
                         font="large-button"
                         >
                         </button-event>
-                        <button type="submit" name="back">戻る</button>
+                        <button type="submit" name="back">{{__('master.Back')}}</button>
 
                     </v-col>
                 </v-row>

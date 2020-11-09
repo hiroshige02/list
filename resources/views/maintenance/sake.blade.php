@@ -1,48 +1,43 @@
-@extends('layouts.app')
-
-@section('contents')
-
 <div id="app">
     <v-app>
         <v-main>
 
+@extends('layouts.app')
+
+@section('contents')
+
+
+
             <v-container>
                 <v-row justify="center">
-                        <!-- 編集ボタン -->
-                        <!-- <div class="text-center"> -->
+
+                    <!-- 編集ボタン -->
                     <v-col cols="12" class="text-center"> <!-- 中心寄せはこれを反映 -->
-                        <button-event
-                            button-text="編集"
+                        <a href="/maintenance/sake/{{ $sake_id }}/edit">
+                            <button-event
+                            button-text="{{__('master.Edit')}}"
                             button-color="pink"
                             :is-large="true"
                             width="150"
                             font="large-button"
-                        >
-                        </button-event>
+                            >
+                            </button-event>
+                        </a>
                     </v-col>
+
                 </v-row>
 
-                <v-row no-gutters>
-                <!-- foreachスタート -->
-                    <v-col cols="12" class="d-flex">
-                        <v-col cols="3">
-                            <p>地域</p>
+                <v-row>
+                    @foreach($datas as $column => $data)
+                        <v-col cols="12" class="d-flex no-gutters">
+                            <v-col cols="3">
+                                <p>{{ $data['label'] }}</p>
+                            </v-col>
+                            <v-col cols="9">
+                                <p>{{ $data['value'] }}</p>
+                            </v-col>
                         </v-col>
-                        <v-col cols="9">
-                            <p>どこか知らない場所・・ながくしたらどうなるのんおおおおおおお</p>
-                        </v-col>
-                    </v-col>
-                    <!-- foreach終わり -->
-
-                    <v-col cols="12" class="d-flex">
-                        <v-col cols="3">
-                            <p>蔵名</p>
-                        </v-col>
-                        <v-col cols="9">
-                            <p>小沢酒造</p>
-                        </v-col>
-                    </v-col>
-                    
+                    @endforeach
                 </v-row>
 
                 <v-row justify="center" no-gutters>
@@ -50,31 +45,27 @@
 
                         <!-- カルーセル -->
                         <carousel-list
-                            :per-page="{{ $set_per_page }}"                        >
+                        :per-page="{{ $set_per_page }}"
+                        :images='@json($images)'>
                         </carousel-list>
-                        
+
                     </v-col>
                 </v-row>
 
                 {{-- グラフ表示 --}}
                 <v-row justify="center">
-                </v-row>
-
-                {{-- グラフ表示 --}}
-                <v-row no-gutters>
-                    <v-col cols="12" class="d-flex">
-                        <v-col cols="3">
-                            <p>コメント</p>
-                        </v-col>
-                        <v-col cols="9">
-                            <p>どこか知らない場所・・ながくしたらどうなるのんおおおおおおお</p>
-                        </v-col>
+                    <v-col cols=12>
+                        <radar-chart
+                        :rader-data='@json($rader_data)'
+                        :sake-name="{{ $datas['name']['label'] }}">
+                        </radar-chart>
                     </v-col>
                 </v-row>
-                
+
+
                 <v-row justify="center">
-                    <a href="#" class="link">
-                        <p>戻る</p>
+                <a href="{{ $back_to }}" class="link">
+                        <p> {{__('master.Back')}}</p>
                     </a>
                 </v-row>
             </v-container>
@@ -83,8 +74,5 @@
 </div>
 
 
-   <!-- カルーセルスライダー導入 -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue-carousel@0.18.0/dist/vue-carousel.min.js"></script> -->
-    
+
 @endsection

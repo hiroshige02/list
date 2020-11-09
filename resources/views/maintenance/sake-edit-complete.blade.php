@@ -24,19 +24,19 @@
                     <v-col cols="12" class="text-center">
                         <a href="/maintenance">
                             <button-event
-                                button-text='管理画面に移動'
-                                button-color="primary"
-                                :is-large='true'
-                                height="56"
-                                width="220"
-                                font="large-button"
+                            button-text='{{__('master.ToMaintenance')}}'
+                            button-color="primary"
+                            :is-large='true'
+                            height="56"
+                            width="220"
+                            font="large-button"
                             >
                             </button-event>
                         </a>
                     </v-col>
                             <v-col cols="12" class="text-center">
                                 <a href="#" class="link">
-                                    <p>戻る</p>
+                                    <p>{{__('master.Back')}}</p>
                                 </a>
                             </v-col>
                     </v-col>

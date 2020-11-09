@@ -8,10 +8,7 @@
 
             <v-container>
                 <v-row dense>
-                    {{-- コントローラーからjson配列を送る
-                        @foreach($json_datas as $data) --}}
                         <list-index></list-index>
-                    {{-- @endforeach --}}
                 </v-row>
 
                 <v-row justify="center">
@@ -20,7 +17,7 @@
                     </v-col>
                     <v-col cols=12 class="text-center">
                         <a href="#" class="link">
-                            戻る
+                            {{__('master.Back')}}
                         </a>
                     </v-col>
                 </v-row>

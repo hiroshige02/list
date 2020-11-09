@@ -11,14 +11,16 @@
 
 <script>
   export default {
-    props: ['totalPages','perPage'],
+    props: ['totalPages','perPage','currentPage'],
     data () {
         return {
             page: 1,
         }
     },
     created(){
-
+        if(this.$props.currentPage != undefined){
+            this.$data.page = this.$props.currentPage;
+        }
     },
     methods: {
         clickPage(pageNumber){

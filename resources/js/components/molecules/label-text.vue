@@ -1,8 +1,8 @@
 <template>
     <div>
         <p class="label-text">{{textTitle}}</p>
-        <!-- <input-text :text-title="textTitle"></input-text> -->
         <input-text
+        :type="type"
         :value="value"
         :name="name"
         :error-messages="errorMessages"
@@ -14,6 +14,6 @@
 <script>
 
     export default {
-        props: ['textTitle','value','name','errorMessages']
+        props: ['textTitle','type','value','name','errorMessages']
     }
 </script>

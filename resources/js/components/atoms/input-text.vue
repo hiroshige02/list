@@ -2,6 +2,7 @@
     <v-text-field
     :label="textTitle"
     outlined
+    :type="type"
     :name="name"
     :value="value"
     :error-messages="errorMessages"
@@ -12,7 +13,7 @@
 
 <script>
   export default {
-    props: ['textTitle','name',
+    props: ['textTitle','type','name',
     'prefixText','success','value','errorMessages']
   }
 </script>

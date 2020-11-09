@@ -10,7 +10,7 @@
             class="d-inline-block mx-auto"
             width="100%"
             >
-                <a :ref="sake.sake_id" href="#" @click="toSpecifics(sake.sake_id,page)">
+                <a :ref="sake.sake_id" href="#" @click="toSpecifics(sake,page)">
                     <div class="d-flex flex-no-wrap" justify="left">
                         <v-avatar v-if="sake.image_path" class="ma-3" size="125" tile>
                             <v-img :src="sake.image_path"></v-img>
@@ -56,8 +56,8 @@ export default {
     },
     methods: {
         // 遷移先のアドレスを取得
-        toSpecifics(sakeId,pageNo){
-            this.$refs[sakeId][0].href = `/maintenance/sake/${sakeId}/${pageNo}`;
+        toSpecifics(sake,pageNo){
+            this.$refs[sake.sake_id][0].href = `/maintenance/sake/${sake.sake_id}/${pageNo}`;
             return;
         }
     }

@@ -6,7 +6,6 @@
 
 @section('contents')
 
-
             <v-container>
                 <form method="post" action="/maintenance/sake/createconfirm" enctype="multipart/form-data">
                     @csrf
@@ -47,15 +46,14 @@
 
 
                     {{-- プルダウン  --}}
-                    <h4>個人評価</h4>
+                    <h4>{{__('master.PersonalEvaluation')}}</h4>
                     @foreach($tasts as $name => $data)
                         <v-col cols=12 class="d-flex no-gutters">
                             <v-col cols=6>
                                 <span>{{ $data['label'] }}</span>
                             </v-col>
                             <v-col cols=6>
-                                {{-- @if(isset($data['input_old'] && !is_nzpsakeull['input_old']['value'])) --}}
-                                @if(!empty($data['value']))
+                                @if(!empty($data['value']['text']))
                                     <pulldown-event
                                     :item-array='@json($data["selections"])'
                                     name="{{ $name }}"
@@ -66,6 +64,7 @@
                                     <pulldown-event
                                     :item-array='@json($data["selections"])'
                                     name="{{ $name }}"
+                                    error-message="{{$errors->first($name)}}"
                                     ></pulldown-event>
                                 @endif
 
@@ -73,7 +72,7 @@
                         </v-col>
                     @endforeach
 
-                    <h4>メーカー評価</h4>
+                    <h4>{{__('master.MakerEvaluation')}}</h4>
 
                     @foreach($evaluations as $column => $evaluation)
                         <v-col cols="12" class="d-flex no-gutters">
@@ -82,19 +81,19 @@
                             </v-col>
                             <v-col cols="6">
                                 @if(!empty($evaluation['value']))
-                                <pulldown-event
-                                :item-array='@json($evaluation["selections"])'
-                                name="{{ $column }}"
-                                :value='@json($evaluation['value'])'
-                                error-message="{{$errors->first($column)}}"
-                                ></pulldown-event>
-                            @else
-                                <pulldown-event
-                                :item-array='@json($evaluation["selections"])'
-                                name="{{ $column }}"
-                                error-message="{{$errors->first($column)}}"
-                                ></pulldown-event>
-                            @endif
+                                    <pulldown-event
+                                    :item-array='@json($evaluation["selections"])'
+                                    name="{{ $column }}"
+                                    :value='@json($evaluation['value'])'
+                                    error-message="{{$errors->first($column)}}"
+                                    ></pulldown-event>
+                                @else
+                                    <pulldown-event
+                                    :item-array='@json($evaluation["selections"])'
+                                    name="{{ $column }}"
+                                    error-message="{{$errors->first($column)}}"
+                                    ></pulldown-event>
+                                @endif
 
                             </v-col>
                         </v-col>
@@ -118,11 +117,11 @@
                     </v-row>
 
                     <v-row>
-                        <p class="label-text">画像</p>
+                        <p class="label-text">{{__('master.Picture')}}</p>
                     </v-row>
 
                     @error('file')
-                        <p>{{ $message }}</p>
+                        <p style="color:#ff5252">{{ $message }}</p>
                     @enderror
 
                     @if(!empty($input_images))
@@ -152,7 +151,7 @@
                     <v-col cols="12" class="text-center">
                         <button-event
                         type="submit"
-                        button-text='登録確認'
+                        button-text="{{__('master.RegisterConfirm')}}"
                         button-color="pink"
                         :is-normal='true'
                         height="56px"
@@ -164,7 +163,7 @@
                     </v-col>
                     <v-col cols=12 align="center">
                         <a href="/maintenance">
-                            <p>戻る</p>
+                            <p>{{__('master.Back')}}</p>
                         </a>
                     </v-col>
                 </v-row>

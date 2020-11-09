@@ -49,4 +49,20 @@ use Illuminate\Database\Eloquent\SoftDeletes;
         'id', 'created_at', 'updated_at'
     ];
 
+    /**
+     * @param int $sake_id
+     * @return App\Models\Sake|null $joined_sake
+     */
+    public static function getJoinedData($sake_id){
+        $joined_sake = Sake::join('personal_evaluations','sakes.id','=','personal_evaluations.sake_id')
+        ->join('maker_evaluations','sakes.id','=','maker_evaluations.sake_id')
+        ->where('sakes.id', $sake_id)
+        ->select('sakes.id','name','name_kana','kura','prefecture',
+        'sweetness','acidity','richness','cost_performance','recommend_point',
+        'sake_degree','amino_acid_degree')
+        ->first();
+
+        return ($joined_sake);
+    }
+
 }

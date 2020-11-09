@@ -25,7 +25,7 @@
 
                     <v-col cols=12 class="d-flex">
                         <v-col cols=3>
-                            <p>画像登録</p>
+                            <p>{{__('master.Picture')}}</p>
                         </v-col>
                         <v-spacer></v-spacer>
                     </v-col>
@@ -48,7 +48,7 @@
                     <v-col cols="12" class="text-center">
                         <button-event
                         type="submit"
-                        button-text='登録'
+                        button-text="{{__('master.Register')}}"
                         button-color="pink"
                         :is-normal='true'
                         height="56px"
@@ -56,7 +56,7 @@
                         font="large-button"
                         >
                         </button-event>
-                        <button type="submit" name="back">戻る</button>
+                        <button type="submit" name="back">{{__('master.Back')}}</button>
 
                     </v-col>
                 </v-row>

@@ -17,6 +17,7 @@
             >
             </modal>
         </v-col>
+        <input v-if="deleteFlag" type="hidden" name="delete_image_ids[]" :value="imageId">
     </div>
 </template>
 
@@ -30,6 +31,7 @@
             imageId: '',
             createFlag: undefined,
             confirmFlag: undefined,
+            deleteFlag: false
         }
     },
     created(){
@@ -61,6 +63,7 @@
         },
         deleteLinkImage(){
             this.$refs.modalLink.remove();
+            this.$data.deleteFlag = true;
         }
     }
 
