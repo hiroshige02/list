@@ -6,6 +6,7 @@ use App\MasterDefine;
 use App\Models\Picture;
 use Illuminate\Http\File;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class PictureService
@@ -18,7 +19,7 @@ class PictureService
      */
     const EXTENSION = [
         'jpeg',
-        // 'png', //エラーを出すためにコメントアウト中
+        'png',
         'jpg',
         'bmb',
         'gif'
@@ -31,12 +32,11 @@ class PictureService
      * @param int $id
      *
      */
-    public function checkSakeRelation($delete_ids, $id) {
-        foreach($delete_ids as $d_id){
-            $picture = Picture::find($d_id);
+    public function checkSakeRelation($picture_ids, $id) {
+        foreach($picture_ids as $p_id){
+            $picture = Picture::find($p_id);
             if(empty($picture) || ($picture->sake_id != $id)){
-                //！！！！！エラー処理必要！！！！！！
-                var_dump('NOT RELATED error!!');
+                abort(505);
             }
         }
         return;
@@ -60,7 +60,12 @@ class PictureService
         }
 
         foreach ($upload_files as $file) {
+            Log::debug('****** file file ********::');
+            Log::debug(print_r($file,true));
             $post_file = new File($file);
+            if(empty($post_file)){
+                return;
+            }
             $file_name = $file->getClientOriginalName();
             $extension = $post_file->extension();
 
@@ -106,8 +111,6 @@ class PictureService
                 ];
             }
         }
-        // var_dump($not_display);exit;
-        // var_dump($image_datas);exit;
 
         return $image_datas;
     }

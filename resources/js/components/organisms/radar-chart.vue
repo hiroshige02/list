@@ -1,65 +1,59 @@
 <script>
-    import { Bar } from 'vue-chartjs';
+    import { Radar } from 'vue-chartjs';
 
     export default {
-    extends: Bar,
+    extends: Radar,
+    props: ["raderData", "sakeName"],
     name: 'chart',
     data () {
         return {
-        data: {
-            labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-            datasets: [
-            {
-                label: 'Bar Dataset',
-                data: [10, 20, 30, 40, 50, 30],
-                backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-                ],
-                borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-                ],
-                borderWidth: 1
+            data: {
+                labels: ['甘さ', '酸味', '味の濃さ', 'コストパフォーマンス', '淡麗さ','おすすめ度', '辛さ'],
+                datasets: [
+                    {
+                        label: this.$props.sakeName,
+                        data: [],
+                        backgroundColor: "rgba(228,101,150,0.2)",
+                        borderColor: "rgba(228,101,150,0.2)",
+                        borderWidth: 2,
+                        spanGaps: true,
+                        fontSize: 16,
+                    },
+                ]
             },
-            {
-                label: 'Line Dataset',
-                data: [10, 50, 20, 30, 30, 40],
-                borderColor: '#CFD8DC',
-                fill: false,
-                type: 'line',
-                lineTension: 0.3,
-            }
-            ]
-        },
-        options: {
-            scales: {
-            xAxes: [{
-                scaleLabel: {
-                display: true,
-                labelString: 'Month'
+            options: {
+                responsive: true,
+                title: {  // タイトル
+                    display: true,
+                    fontSize: 20,
+                    text: "個人評価"
+                },
+                legend: {
+                    position: 'bottom', // 凡例の表示位置
+                    display: false
+                },
+                scale: {
+                    pointLabels: {
+                        fontSize: 13,
+                    },
+                    ticks: {
+                        suggestedMax: 5,
+                        suggestedMin: 0,
+                        stepSize: 1,
+                    },
+                    gridLines: {// 補助線（目盛の線）
+                        display: true,
+                        color: "mistyrose"
+                    }
                 }
-            }],
-            yAxes: [{
-                ticks: {
-                beginAtZero: true,
-                stepSize: 10,
-                }
-            }]
             }
-        }
         }
     },
+    created() {
+        this.$data.data.datasets[0].data = this.$props.raderData;
+    },
     mounted () {
-        this.renderChart(this.data, this.options)
+        this.renderChart(this.data, this.options);
     }
-    }
+}
 </script>

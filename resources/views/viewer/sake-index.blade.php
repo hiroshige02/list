@@ -1,4 +1,3 @@
-
 <div id="app">
     <v-app>
         <v-main>
@@ -12,16 +11,18 @@
                 :total-pages="{{ $total_pages }}"
                 per-page="{{ $per_page }}"
                 :return-page="{{ $return_page }}"
+                maintenance="{{ $maintenance }}"
                 ></items-pagenate>
                 <v-row justify="center">
                     <v-col cols=12 class="text-center">
-                        <a href="/maintenance" class="link">
+                        <a href="/" class="link">
                             {{__('master.Back')}}
                         </a>
                     </v-col>
                 </v-row>
             </v-container>
-    </v-main>
+
+        </v-main>
     </v-app>
 </div>
 @endsection

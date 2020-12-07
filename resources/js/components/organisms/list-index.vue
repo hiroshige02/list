@@ -34,13 +34,12 @@
 
 export default {
     props: ['datas','buttonText','buttonColor',
-    'isNormal','isLarge','currentPage'],
+    'isNormal','isLarge','currentPage','maintenanceAddress'],
 
     data() {
         return {
             sakes: this.$props.datas,
             page: 1,
-            formAction: '/maintenance/sake/'
         }
     },
     created(){
@@ -51,13 +50,16 @@ export default {
         },
         currentPage: function(){
             this.$data.page = this.$props.currentPage;
-            this.$data.formAction = `/maintenance/sake/${this.$data.page}/`;
         },
     },
     methods: {
         // 遷移先のアドレスを取得
         toSpecifics(sake,pageNo){
-            this.$refs[sake.sake_id][0].href = `/maintenance/sake/${sake.sake_id}/${pageNo}`;
+            if(this.$props.maintenanceAddress) {
+                this.$refs[sake.sake_id][0].href = `/maintenance/sake/${sake.sake_id}/${pageNo}`;
+            } else {
+                this.$refs[sake.sake_id][0].href = `/sake/${sake.sake_id}/${pageNo}`;
+            }
             return;
         }
     }

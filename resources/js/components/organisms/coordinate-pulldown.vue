@@ -1,48 +1,52 @@
 <template>
-
-    <!-- 関数名を変数で表示できないか -->
-    <v-col cols="12" class="d-flex no-gutters">
-        <v-col cols=6>
-            <pulldown
-            :label="collectionLabel"
-            :item-array="classes"
-            :post-name="classPostName"
-            eventName="baka"
-            @baka="changeSelection"
-            >
-
-            </pulldown>
-
+    <div>
+        <v-col cols="12" class="d-flex no-gutters">
+            <v-col cols=6>
+                <pulldown
+                :label="collectionLabel"
+                :item-array="classes"
+                :post-name="classPostName"
+                eventName="coordinateChange"
+                @coordinateChange="classChange"
+                >
+                </pulldown>
+            </v-col>
+            <v-col cols=6>
+                <pulldown
+                :label="selectionLabel"
+                :item-array="selections"
+                :post-name="selectionPostName"
+                eventName="selectionChange"
+                @selectionChange="selectionChanged"
+                :if-disabled="inactive"
+                ></pulldown>
+            </v-col>
         </v-col>
-        <v-col cols=6>
-            <pulldown
-            :label="selectionLabel"
-            :item-array="selections"
-            :post-name="selectionPostName"
-            ></pulldown>
-        </v-col>
-    </v-col>
 
+        <search-result :datas="datas" :maintenance="isMaintenance" v-show="searchResult" ></search-result>
+    </div>
 </template>
 
 <script>
   export default {
-    props: ["items"],
+    props: ["items", "maintenance"],
     data(){
-        //ここの初期化が効いていないのでは。
         return {
-            classes: '',
-            selected: '',
-            selections: '',
+            classes: [],
+            selections: [],
             collectionLabel: '',
             selectionLabel: '',
             classPostName: '',
             selectionPostName: '',
+            selectedClass: '',
+            datas: [],
+            searchResult: false,
+            inactive: true,
+            isMaintenance: this.$props.maintenance
         }
     },
 
     created(){
-
 
         this.$data.classes = this.$props.items['classes'];
         this.$data.selections = [];
@@ -52,19 +56,44 @@
         this.$data.selectionPostName = this.$props.items['name_2'];
     },
     watch: {
-        selected: function(){
-            if(this.$data.selected !== ''){
-                console.log('CHANGED!!!');
-                this.$data.selections =  this.$props.items['selections'][this.selected];
-            }
-
-        }
+        datas: function(newValue, oldValue) {
+        this.$data.searchResult = Object.keys(newValue).length > 0;
+        },
     },
     methods: {
-        changeSelection(selectedValue){
+        classChange(selectedValue){
+            this.$data.selectedClass = selectedValue;
             this.$data.selections = this.$props.items['selections'][selectedValue];
+
+            if(selectedValue == undefined){
+                this.$data.inactive = true;
+                return;
+            }
+
+            this.$data.inactive = false;
+        },
+        selectionChanged(selectedValue){
+            if(this.$data.selectedClass == ''){
+                console.error('メーカーの評価の種類が選択されていません。');
+                return;
+            }
+
+            let that = this;
+
+            axios.post('/api/sake_search', {
+                'class': that.$data.selectedClass,
+                'search_text': selectedValue,
+                'search_type': 2
+            },)
+            .then(function(res) {
+                console.log(res.data)
+                //検索結果をリストに反映
+                that.$data.datas = res.data;
+            }).catch(function(error){
+                console.log(error);
+            });
         }
-    }
+    },
 
   }
 </script>

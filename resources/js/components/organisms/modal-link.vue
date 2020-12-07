@@ -1,9 +1,7 @@
 <template>
     <div>
         <v-col cols="12" ref="modalLink" >
-            <a @click="openModal()" :src="imagePath" alt="">
-                <img :src="imagePath" alt="">
-            </a>
+            <img :src="imagePath" alt="" @click="openModal()">
 
             <modal
             :path="imagePath"

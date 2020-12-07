@@ -13,7 +13,7 @@
           :icon-type="iconType"
           :eventName="eventName"
           dark
-          @click="clickEvent"
+          @click="onclick"
         ><span :class="font">{{buttonText}}</span></v-btn>
     </div>
 </template>
@@ -34,23 +34,14 @@
       };
     },
     methods: {
-      // triggerEvent: function(){
-      //   console.log('kkkkkkk');
-      //   this.$emit(this.$props.eventName);
-      // }
-      clickEvent: function(){
-        if(this.$props.eventName == 'decreaseInput'){
-          this.anone();
-        }else{
-          return;
-        }
-      },
-      anone(){
-            console.log('yeeeeeeeeeeeah')
-            // this.$parent.$el.remove();
+        onclick(){
+            if(this.$props.eventName != undefined){
+                this.$emit(this.$props.eventName);
+                return;
+            }
+
         }
     }
 
   }
-  //イベント制御をここでする
 </script>

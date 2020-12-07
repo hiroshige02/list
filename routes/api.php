@@ -20,3 +20,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 // 仮ディスク中の画像を削除
 Route::post('/tentative_image/delete', 'Maintenance\SakeController@tentativeImageDelete');
+
+// アイテム検索
+Route::post('/sake_search', 'Viewer\SakeController@sakeSearch');

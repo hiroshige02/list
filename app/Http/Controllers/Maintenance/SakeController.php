@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Maintenance;
 
+use Exception;
 use App\Models\Sake;
 use App\MasterDefine;
 use App\Models\Picture;
@@ -9,7 +10,6 @@ use Illuminate\Http\File;
 use Illuminate\Http\Request;
 use App\Services\SakeService;
 use App\Models\MakerEvaluation;
-
 use App\Services\PictureService;
 use App\Models\PersonalEvaluation;
 use Illuminate\Support\Facades\DB;
@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class SakeController extends Controller
 {
@@ -51,85 +52,12 @@ class SakeController extends Controller
 
 
     /**
-     * コンストラクタ
-     *
-     * @param int $prefecture
-     * @return void
-     *
-     */
-    public function prefectureIndex($prefecture, Request $request)
-    {
-
-        $viewData = [];
-
-        $viewData['return_page'] = 1;
-
-        //show画面から戻ってきた時は、元のページインデックスに戻る
-        if($request->session()->get('page_number')){
-            $viewData['return_page'] = $request->session()->get('page_number');
-            $request->session()->forget('page_number');
-        }
-
-        $prefecture_keys = array_keys(MasterDefine::PREFECTURES);
-        if (!in_array($prefecture, $prefecture_keys)) {
-            //エラー処理
-        }
-
-        //「戻る」で戻ってこれるようにセット
-        $request->session()->put('prefecture', $prefecture);
-
-        $sakes = Sake::wherePrefecture($prefecture)->get();
-        $datas = [];
-
-        foreach($sakes as $sake){
-            $pictures = Picture::whereSakeId($sake->id)->first();
-
-            //現状画像一枚しか表示しないようになっている
-            $image_path = null;
-            if (!empty($pictures)) {
-                $image_path = $pictures->image_path;
-            }
-
-            $datas[] = [
-                'sake_id' => $sake->id,
-                'name' => $sake->name,
-                'kura' => $sake->kura,
-                'prefecture' => $sake->prefecture,
-                'image_path' => $image_path
-            ];
-        }
-
-        $viewData['datas'] = $datas;
-
-        //ページネーション準備
-        $per_page = 2;
-        $viewData['per_page'] = $per_page;
-        $total_pages = count($sakes) % $per_page ?
-        count($sakes)/$per_page : ceil(count($sakes)/$per_page);
-        $viewData['total_pages'] = $total_pages;
-
-        $prefecture_name = MasterDefine::PREFECTURES[$prefecture];
-        $viewData['title'] = $prefecture_name . 'のお酒';
-
-        return view('maintenance.sake-index', $viewData);
-    }
-
-    /**
-     * 検索結果表示
-     *
-     * @return void
-     */
-    public function searched()
-    {
-        $viewData = [];
-        $viewData['title'] = "'さわ音'検索結果";
-
-        return view('maintenance.searched', $viewData);
-    }
-
-    /**
      * 詳細画面から「戻る」際に必要なセッションをセット
      *
+     * @param int $sake_id
+     * @param int $page
+     * @param \Illuminate\Http\Request
+     * @return void
      *
      */
     public function pageSet($sake_id, $page, Request $request){
@@ -138,15 +66,21 @@ class SakeController extends Controller
 
     }
 
+    /**
+     * 酒の詳細表示画面に遷移
+     *
+     * @param int $sake_id
+     * @param \Illuminate\Http\Request
+     * @return void
+     *
+     */
     public function show($sake_id, Request $request)
     {
-        if(empty($sake_id)){
-            //エラー処理
-        }
-
-        $joined_data = Sake::getJoinedData($sake_id);
+        $joined_data = Sake::getSakeDatasFromId($sake_id)->first();
         if (empty($joined_data)) {
-            //酒が存在しないエラー処理
+            //酒が存在しない
+            Log::info('sake show NOT EXIST id:' . $sake_id);
+            abort(500);
         }
 
 
@@ -165,7 +99,7 @@ class SakeController extends Controller
             $datas[$column]['value'] = $joined_data->{$column};
         }
 
-        // //画像のパスを取得
+        //画像のパスを取得
         $image_datas = $this->pictureService->getS3ImageData($sake_id);
         $viewData['images'] = array_column($image_datas, "path");
         $viewData['datas'] = $datas;
@@ -175,7 +109,10 @@ class SakeController extends Controller
 
         $rader_data = $this->sakeService->getRaderDatas($joined_data);
         $viewData['rader_data'] = $rader_data;
-        $viewData['back_to'] = "/maintenance/sake/prefecture/{$request->session()->get('prefecture')}";
+
+        if(!empty($request->session()->get('prefecture'))) {
+            $viewData['back_to'] = "/maintenance/sake/prefecture/{$request->session()->get('prefecture')}";
+        }
 
         return view('maintenance.sake', $viewData);
     }
@@ -218,7 +155,7 @@ class SakeController extends Controller
         $viewData['title'] = '新規登録';
         $viewData['sake_info'] = $this->sakeService->getSakeOptions();
 
-        if(!empty($old_input['prefecture'])){
+        if(isset($old_input['prefecture'])){
             $old_prefecture = $old_input['prefecture'];
         }
 
@@ -245,8 +182,8 @@ class SakeController extends Controller
             'sake_degree' => ['nullable','string'],
             'amino_acid_degree' => ['nullable','string'],
             'memo' => ['string','max:1000'],
-
-            'file' => ['nullable','image','max:2048'],
+            'file' => 'nullable|array',
+            'file.*' => ['nullable','image','max:2048'],
         ];
 
         return $rules;
@@ -271,7 +208,6 @@ class SakeController extends Controller
     function createConfirm(Request $request)
     {
         $user_id = Auth::user()->id;
-        $files = [];
 
         //バリデーション
         $validator = Validator::make($request->all(),
@@ -281,12 +217,6 @@ class SakeController extends Controller
             //上記メソッドでバリデーションを通過した画像は仮ディスクに保管される
             $validator = $this->pictureService->validateStoreImage($user_id,$request->file('file'),$validator);
         }
-
-        // var_dump($request->post());exit;
-        // $prefecture = $this->sakeService->getPrefectureOptions($request->post('prefecture'));
-        // $prefecture = $prefecture['value'];
-        // var_dump('aaaaaaaaa');//で出るのみ下のかっこの中に入らない！なぜ？？
-        // var_dump($prefecture['value']);exit;//で出るのみ下のかっこの中に入らない！なぜ？？
 
         if ($validator->fails()) {
             //バリデーション を通過した画像はリダイレクト先で表示する。そのためのサイン
@@ -298,22 +228,7 @@ class SakeController extends Controller
         $viewData = [];
         $viewData['title'] = '新規登録確認';
 
-        $datas = $this->sakeService->getConfirmColumns();
-
-        foreach ($datas as $column => $post) {
-            if (!isset($post['pulldown'])) {
-                $datas[$column]['value'] = $request->get($column);
-            }else{
-                $pulldown_keys = array_keys($post['pulldown']);
-                //postした値が
-                $datas[$column]['value'] = null;
-                if($request->get($column) !== false && (!is_null($request->get($column)))
-                && (in_array($request->get($column), $pulldown_keys))){
-
-                    $datas[$column]['value'] = $post['pulldown'][$request->get($column)];
-                }
-            }
-        }
+        $datas = $this->sakeService->getConfirmColumns($request->post());
 
         //確認画面のモーダル用のデータを取得
         $new_images = $this->pictureService->getTentativeImageData($user_id, true);
@@ -405,15 +320,11 @@ class SakeController extends Controller
 
 
     function edit($id,Request $request){
-        // return view('errors.404', ['title' => 'ご指定のページが見つかりません']);
-        // abort(404, 'Not Found');
-        // throw new \Exception("testです");
-        // var_dump($request->old());exit;
-
         //該当ID酒の存在チェック
         $sake = Sake::find($id);
         if(empty($sake)){
-            var_dump('eieoio');exit; //エラーハンドリング必要
+            Log::info('sake edit NOT FOUND : id'.$id);
+            abort(500);
         }
 
         $sake_id = $sake->id;
@@ -490,7 +401,6 @@ class SakeController extends Controller
             return redirect("/maintenance/sake/{$id}/{$page_number}");
         }
 
-
         $user_id = Auth::user()->id;
         $validator = Validator::make($request->all(),
         $this->getSakeValidationRules(),$this->customMessages());
@@ -501,6 +411,7 @@ class SakeController extends Controller
 
         if ($validator->fails()) {
             $request->session()->flash('preserve', true);
+
             return redirect("/maintenance/sake/{$id}/edit")->withInput()
             ->withErrors($validator);
         }
@@ -511,46 +422,29 @@ class SakeController extends Controller
         $user_id = Auth::user()->id;
         $viewData['user_id'] = $user_id;
 
+        //削除予定Pictureのid
         $delete_ids = $request->get('delete_image_ids') ? $request->get('delete_image_ids'):[];
 
         if (!empty($request->get('redirect_delete_image_ids'))) {
             $delete_ids = array_merge($delete_ids,$request->get('redirect_delete_image_ids'));
         }
 
+        //結びつく画像データについて取得
         $exist_images = $this->pictureService->getS3ImageData($id, $delete_ids, true);
 
         $viewData['delete_image_ids'] = $delete_ids;
-        //このidとmerged_delete_idsとの付き合わせを行う
+        //このidとmerged_delete_idsとの付き合わせを行う。
         if (count($delete_ids) > 0) {
             foreach ($exist_images as $key => $i) {
-                if (in_array($i['id'], $delete_ids)) {
-                    continue;
+                if (!in_array($i['id'], $delete_ids)) {
+                    unset($i);
                 }
-                unset($i);
-
-
-                //？？？？？？？？？？
             }
         }
 
         $new_images = $this->pictureService->getTentativeImageData($user_id,true);
 
-        $datas = $this->sakeService->getConfirmColumns();
-
-        $i = 0;
-        foreach ($datas as $column => $post) {
-            if (!isset($post['pulldown'])) {
-                $datas[$column]['value'] = $request->get($column);
-            }else{
-                $pulldown_keys = array_keys($post['pulldown']);
-                $datas[$column]['value'] = null;
-
-                if($request->get($column) !== false && (!is_null($request->get($column)))
-                && (in_array($request->get($column), $pulldown_keys))){
-                    $datas[$column]['value'] = $post['pulldown'][$request->get($column)];
-                }
-            }
-        }
+        $datas = $this->sakeService->getConfirmColumns($request->post());
 
         $viewData['datas'] = $datas;
 
@@ -562,6 +456,10 @@ class SakeController extends Controller
         return view('maintenance.sake-edit-confirm', $viewData);
     }
 
+
+    /**
+     *
+     */
     function update($id,Request $request){
         //戻るボタン押下
         $back = $request->post('back', false);
@@ -628,8 +526,6 @@ class SakeController extends Controller
             }
         }
 
-
-
         //トランザクション開始
         DB::transaction(function () use ($id,$sake,$personal,$maker,$request,$user_id,$delete_ids) {
             $sake->update();
@@ -673,10 +569,6 @@ class SakeController extends Controller
     }
 
 
-
-    function search(Request $request){
-        var_dump($request->post());exit;
-    }
 
     public function tentativeImageDelete(Request $request){
 

@@ -26,7 +26,7 @@
                             <span>{{ $prefecture['label'] }}</span>
                         </v-col>
                         <v-col cols="6">
-                            @if(!empty($prefecture['value']))
+                            @if(!empty($prefecture['value']['text']))
                                 <pulldown-event
                                 :item-array='@json($prefecture['selections'])'
                                 name="{{ $prefecture['name'] }}"
@@ -53,7 +53,9 @@
                                 <span>{{ $data['label'] }}</span>
                             </v-col>
                             <v-col cols=6>
-                                @if(!empty($data['value']['text']))
+
+                                {{-- @if($data['value']['text'] == '0' || !empty($data['value']['text'])) --}}
+                                @if(isset($data['value']['text']))
                                     <pulldown-event
                                     :item-array='@json($data["selections"])'
                                     name="{{ $name }}"
@@ -80,7 +82,7 @@
                                 <span>{{ $evaluation['label'] }}</span>
                             </v-col>
                             <v-col cols="6">
-                                @if(!empty($evaluation['value']))
+                                @if(isset($evaluation['value']))
                                     <pulldown-event
                                     :item-array='@json($evaluation["selections"])'
                                     name="{{ $column }}"

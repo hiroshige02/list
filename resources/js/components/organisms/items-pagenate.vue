@@ -5,6 +5,7 @@
                 <list-index
                 :datas="lists"
                 :current-page="currentPage"
+                :maintenanceAddress="isMaintenance"
                 >
                 </list-index>
             </v-col>
@@ -26,19 +27,18 @@
 <script>
 
 export default {
-    props: ['datas','totalPages','perPage','returnPage'],
+    props: ['datas','totalPages','perPage','returnPage','maintenance'],
 
     data() {
         return {
             lists: [],
             currentPage: undefined,
+            isMaintenance: this.$props.maintenance
         }
     },
     created(){
         let parsedData = JSON.parse(this.$props.datas);
         this.$data.lists = parsedData.slice(0,this.$props.perPage);
-        console.log('::::: this.$props.returnPage :::::');
-        console.log(this.$props.returnPage);
 
         if(this.$props.returnPage != undefined){
             this.$data.currentPage = this.$props.returnPage;
@@ -51,8 +51,6 @@ export default {
             //表示画像取得
             this.$data.lists = parsedData.slice(startIndex, this.$data.currentPage * perPage);
 
-            console.log(startIndex);
-            console.log(JSON.stringify(this.$data.lists));
 
         }
     },

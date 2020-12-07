@@ -8,15 +8,18 @@ return [
     'Login' => 'ログイン',
     'Logout' => 'ログアウト',
     'Picture' => '画像',
+    'Prefecture' => '県',
     'NewPicture' => '新規登録画像',
     'RegisteredPicture' => '登録済画像',
     'Back' => '戻る',
+    'Cancel' => 'キャンセル',
     'Register' => '新規登録',
     'RegisterConfirm' => '登録確認',
     'Edit' => '編集',
     'EditConfirm' => '編集確認',
     'Update' => '更新',
     'Submit' => '送信',
+    'Delete' => '削除する',
     'Search' => '検索',
     'More' => 'もっと見る',
     'PersonalEvaluation' => '個人評価',
@@ -25,6 +28,7 @@ return [
     'SearchPersonalEvaluation' => '個人の評価から探す',
     'SearchArea' => 'エリアから探す',
     'ToMaintenance' => '管理画面に移動',
-    'WriteComment'  => 'コメントを入力してください'
-
+    'WriteComment'  => 'コメントを入力してください',
+    'NotFound' => 'ご指定のページが見つかりません',
+    'TemporalError' => '一時的なエラーが発生しました',
 ];

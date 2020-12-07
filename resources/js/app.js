@@ -46,6 +46,7 @@ Vue.component('label-text-area', require('./components/molecules/label-text-area
 Vue.component('pagenation', require('./components/molecules/pagenation.vue').default);
 Vue.component('pulldown-event', require('./components/molecules/pulldown-event.vue').default);
 Vue.component('modal', require('./components/molecules/modal.vue').default);
+Vue.component('search-result', require('./components/molecules/search-result.vue').default);
 
 //organisms
 Vue.component('carousel-list', require('./components/organisms/carousel-list.vue').default);
@@ -56,7 +57,8 @@ Vue.component('radar-chart', require('./components/organisms/radar-chart.vue').d
 Vue.component('coordinate-pulldown', require('./components/organisms/coordinate-pulldown.vue').default);
 Vue.component('modal-link', require('./components/organisms/modal-link.vue').default);
 Vue.component('items-pagenate', require('./components/organisms/items-pagenate.vue').default);
-
+Vue.component('search-area', require('./components/organisms/search-area.vue').default);
+Vue.component('personal-search', require('./components/organisms/personal-search.vue').default);
 
 
 /**

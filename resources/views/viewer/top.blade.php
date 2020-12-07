@@ -2,29 +2,24 @@
     <v-app>
         <v-main>
 
-            @extends('layouts.maintenance')
+            @extends('layouts.app')
             @section('contents')
+
             <v-container>
-                <v-row>
-                    <v-col cols=12>
-                        <a href="/maintenance/sake/create" style="display:inline-block;">
-                            <button-event
-                            button-text="{{__('master.Register')}}"
-                            button-color="pink"
-                            :is-large='true'
-                            :height=50
-                            font="large-button">
-                            </button-event>
-                        </a>
+                <v-row justify="center">
+                    <v-col cols="12">
+                        <textarea class="updated">2020/7/2  ○ ○ UP<br>2020/6/2  ○ ○ UP
+                        </textarea>
                     </v-col>
                 </v-row>
+
                 <v-row no-gutters>
                     <search-area
                     name="name_search"
                     search-text=""
-                    :is-error="false"
+                    is-error=false
                     error-messages=""
-                    :maintenance="true"
+                    maintenance="{{ $maintenance }}"
                     >
                     </search-area>
                 </v-row>
@@ -36,11 +31,9 @@
                     </v-col>
                     <coordinate-pulldown
                     :items='@json($maker_selections)'
-                    :maintenance="true"
+                    maintenance="{{ $maintenance }}"
                     >
                     </coordinate-pulldown>
-
-                    </v-col>
                 </v-row>
 
                 {{-- 個人の評価 --}}
@@ -51,7 +44,7 @@
 
                     <personal-search
                     personal-data='@json($personal_selections)'
-                    :maintenance="true"
+                    maintenance="{{ $maintenance }}"
                     >
                     </personal-search>
                 </v-row>
@@ -64,13 +57,12 @@
                     <v-col cols=12 class="no-gutters">
                         @foreach($areas as $areas => $area)
                             <ul>
-                                {{-- 将来的には@foreachで書いた方がいい --}}
                                 <li id="{{ $area['name'] }}" onclick="displayToggle(this.id)">
                                     {{ $area['display_name'] }}
                                     <ul id="{{ $area['name'] }}_prefectures" class="hide" onclick="event.stopPropagation()">
                                         @foreach($area['prefectures'] as $number => $p)
                                             <li>
-                                                <a href="maintenance/sake/prefecture/{{$number}}" class="link inner">{{ $p }}</a>
+                                                <a href="sake/prefecture/{{$number}}" class="link inner">{{ $p }}</a>
                                             </li>
                                         @endforeach
                                     </ul>
@@ -83,8 +75,9 @@
 
             </v-container>
 
-        </v-main>
-    </v-app>
-</div>
+            </v-main>
+        </v-app>
+    </div>
 
-@endsection
+    @endsection
+

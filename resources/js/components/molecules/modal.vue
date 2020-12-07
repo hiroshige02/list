@@ -23,7 +23,7 @@
                     <v-col cols=6 @click="deleteImage">
                         <!-- 削除ボタン -->
                         <button-event
-                        button-text='削除する'
+                        button-text="削除する"
                         button-color="pink"
                         :is-normal='true'
                         height="56px"
@@ -66,18 +66,13 @@
         console.log('******* CHECK *******');
         console.log('this.$props.confirmFlag : ' + this.$props.confirmFlag);
         console.log('createFlag : ' + this.$props.createFlag);
-        // console.log('deleteImageIds : ' + this.$props.deleteImageIds);
-
-        // if(this.$props.createFlag != undefined){
-        //     console.log('******* CREATE VERSION *******');
-        //     this.$data.imagePath = `/storage/app/public/img/tmp/${this.$props.userId}/${this.$props.path}`;
-        //     console.log('MODAL::this.$data.imagePath : ' + this.$data.imagePath);
-
-        //     return;
-        // }
         this.$data.imagePath = this.$props.path;
     },
-
+    watch: {
+        path: function(){
+            this.$data.imagePath = this.$props.path;
+        }
+    },
     methods: {
 
         deleteImage: function() {
@@ -123,8 +118,10 @@
   position:fixed;
   top:0;
   left:0;
-  width:100%;   /* ひとまずbody-containerが400pxの時に合わせて作っている　*/
+  width:100%;
   height:100%;
+  /* height: 100vh;
+  width: 100vw; */
   /* transform: translate(calc(50vw - 50%),calc(50vh - 50%)); ダメだった */
 
   border-radius: 8px;
@@ -144,5 +141,7 @@
 
 #modal-content > img {
   width: 95%;
+  height: 70%;
+  object-fit: contain;
 }
 </style>

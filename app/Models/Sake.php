@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -53,16 +54,67 @@ use Illuminate\Database\Eloquent\SoftDeletes;
      * @param int $sake_id
      * @return App\Models\Sake|null $joined_sake
      */
-    public static function getJoinedData($sake_id){
-        $joined_sake = Sake::join('personal_evaluations','sakes.id','=','personal_evaluations.sake_id')
-        ->join('maker_evaluations','sakes.id','=','maker_evaluations.sake_id')
-        ->where('sakes.id', $sake_id)
-        ->select('sakes.id','name','name_kana','kura','prefecture',
-        'sweetness','acidity','richness','cost_performance','recommend_point',
-        'sake_degree','amino_acid_degree')
-        ->first();
-
-        return ($joined_sake);
+    public static function getSakeDatasFromId($sake_id){
+        $joined_sakes = static::getJoinedSakeData();
+        return $joined_sakes->where('sakes.id', $sake_id);
     }
 
+    public static function getJoinedSakeData(){
+        $joined_sakes = Sake::join('personal_evaluations','sakes.id','=','personal_evaluations.sake_id')
+        ->join('maker_evaluations','sakes.id','=','maker_evaluations.sake_id')
+        ->select('sakes.id','name','name_kana','kura','prefecture',
+        'sweetness','acidity','richness','cost_performance','recommend_point',
+        'sake_degree','amino_acid_degree');
+
+        return $joined_sakes;
+    }
+
+    /**
+     * @param string $name
+     * @return App\Models\Sake $sakes
+     */
+    public static function getSakeFromName($name){
+        $sakes = static::getJoinedSakeData();
+        return $sakes->where('name', 'like', $name)->get();
+    }
+
+    /**
+     * @param string class
+     * @param int $maker_evaluation
+     * @return App\Models\Sake $sakes
+     */
+    public static function getSakeFromMakerEv($class ,$evaluation){
+        Log::debug('********** getSakeFromMakerEv ************');
+        $joined_sakes = static::getJoinedSakeData();
+
+        return $joined_sakes->where($class, $evaluation)->get();
+        // return $sake_datas;
+    }
+
+    /**
+     * 個人の評価からアイテムを検索
+     *
+     * @param array $personal_ev
+     * @return \Illuminate\Database\Eloquent\Collection $sakes
+     */
+    public static function getSakeFromPersonalEv($personal_ev) {
+        $sakes = static::getJoinedSakeData();
+        foreach($personal_ev as $key => $value){
+            if (!empty($value)) {
+                $sakes = $sakes->where($key, $value);
+            }
+        }
+        return $sakes;
+    }
+
+    /**
+     * ID配列からアイテムを検索
+     *
+     * @param array $ids
+     * @return \Illuminate\Database\Eloquent\Collection $sakes
+     */
+    public static function getSakeDatasFromIds($ids) {
+        $sakes = static::getJoinedSakeData()->whereIn('sakes.id', $ids);
+        return $sakes;
+    }
 }

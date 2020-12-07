@@ -14,19 +14,23 @@ use Illuminate\Support\Facades\Route;
 */
 
 
+// ログインしてない人
 Route::get('/login', 'Auth\LoginController@showLoginForm')->name('login');
 Route::post('/login', 'Auth\LoginController@login')->name('login');
+Route::get('/sake/prefecture/{prefecture}', 'Viewer\SakeController@prefectureIndex');
 
+Route::get('/sake/{id}', 'Viewer\SakeController@show');
+Route::get('/', 'Viewer\TopController@welcome');
+Route::post('/sake/search', 'Viewer\SakeController@search');
+Route::get('/sake/{sake_id}/{page}', 'Viewer\SakeController@pageSet');
+
+// ログイン済みルート
 Route::group(['middleware' => ['auth']], function () {
     Route::get('/register', 'Auth\RegisterController@showRegistrationForm')->name('register');
     Route::post('/register', 'Auth\RegisterController@register')->name('register');
     Route::post('/logout', 'Auth\LoginController@logout')->name('logout');
 
     Route::get('/maintenance', 'Maintenance\MaintenanceController@index');
-    // Route::get('/maintenance/sake', 'Maintenance\SakeController@index');
-    Route::get('/maintenance/sake/searched', 'Maintenance\SakeController@searched');
-
-    Route::get('/maintenance/sake/prefecture/{prefecture}', 'Maintenance\SakeController@prefectureIndex');
 
     // このあたりresourcesでまとめられないか
     Route::resource('/maintenance/sake',
@@ -37,13 +41,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/maintenance/sake/createcomplete', 'Maintenance\SakeController@createComplete')->name('createcomplete');
     Route::post('/maintenance/sake/{id}/editconfirm', 'Maintenance\SakeController@editConfirm')->name('editconfirm');
 
-    // ログインしてない人
-    Route::get('/sake/{id}', 'Viewer\SakeController@show');
-    Route::get('/', 'Home\TopController@welcome');
-
     Route::get('/home', 'HomeController@index')->name('home');
-
-
     Route::post('/maintenance/sake/search', 'Maintenance\SakeController@search');
 
 });
