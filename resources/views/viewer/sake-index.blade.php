@@ -13,13 +13,6 @@
                 :return-page="{{ $return_page }}"
                 maintenance="{{ $maintenance }}"
                 ></items-pagenate>
-                <v-row justify="center">
-                    <v-col cols=12 class="text-center">
-                        <a href="/" class="link">
-                            {{__('master.Back')}}
-                        </a>
-                    </v-col>
-                </v-row>
             </v-container>
 
         </v-main>

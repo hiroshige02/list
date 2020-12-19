@@ -2,8 +2,18 @@
 
 namespace App\Exceptions;
 
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use Illuminate\Http\Response;
+use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\ViewErrorBag;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Contracts\Support\Responsable;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 class Handler extends ExceptionHandler
 {
@@ -40,16 +50,32 @@ class Handler extends ExceptionHandler
     }
 
     /**
-     * Render an exception into an HTTP response.
+     * オーバーライド
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Throwable  $exception
+     * @param  \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface  $e
      * @return \Symfony\Component\HttpFoundation\Response
-     *
-     * @throws \Throwable
      */
-    public function render($request, Throwable $exception)
+    protected function renderHttpException(HttpExceptionInterface $e)
     {
-        return parent::render($request, $exception);
+        $this->registerErrorViewPaths();
+        $status = $e->getStatusCode();
+        $message = '';
+        if($status == 404){
+            $message = __('master.NotFound');
+        }elseif($status == 500){
+            $message = __('master.TemporalError');
+        }
+
+        if (view()->exists($view = $this->getHttpExceptionView($e))) {
+            return response()->view($view, [
+                'errors' => new ViewErrorBag,
+                'exception' => $e,
+                'status_code' => $status,
+                'message' => $message
+            ], $e->getStatusCode(), $e->getHeaders());
+        }
+
+        return $this->convertExceptionToResponse($e);
     }
+
 }

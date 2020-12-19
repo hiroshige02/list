@@ -3,10 +3,10 @@
         <v-col v-for="(data, column) in datas" :key="column"
         cols=12
         class="d-flex no-gutters">
-            <v-col cols=6>
+            <v-col cols="4">
                 <span>{{ data.label }}</span>
             </v-col>
-            <v-col cols=6>
+            <v-col cols="6">
                 <pulldown
                 :ref="column"
                 :item-array="data.selections"

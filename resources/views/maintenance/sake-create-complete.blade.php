@@ -10,7 +10,7 @@
             <v-container>
                 <v-row justify="center">
 
-                    <v-col cols="12" class="text-center">
+                    <v-col cols="12" align="center">
                         <a href="/maintenance/sake/{{$sake_id}}/edit">
                             <button-event
                                 button-text='登録したお酒を見る'
@@ -23,7 +23,7 @@
                             </button-event>
                         </a>
                     </v-col>
-                    <v-col cols="12" class="text-center">
+                    <v-col cols="12" align="center">
                         <a href="/maintenance">
                             <button-event
                             button-text="{{__('master.ToMaintenance')}}"
@@ -35,13 +35,6 @@
                             >
                             </button-event>
                         </a>
-                    </v-col>
-                            <v-col cols="12" class="text-center">
-                                <a href="#" class="link">
-                                    <p>{{__('master.Back')}}</p>
-                                </a>
-                            </v-col>
-                    </v-col>
                 </v-row>
 
             </v-container>

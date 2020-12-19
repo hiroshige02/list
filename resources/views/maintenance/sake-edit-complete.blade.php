@@ -1,15 +1,15 @@
-@extends('layouts.app')
-
-@section('contents')
 <div id="app">
     <v-app>
         <v-main>
 
+            @extends('layouts.maintenance')
+            @section('contents')
+
             <v-container>
                 <v-row justify="center">
 
-                    <v-col cols="12" class="text-center">
-                        <a href="/maintenance/sake/{{$sake_id}}/edit">
+                    <v-col cols="12" align="center">
+                        <a href="/maintenance/sake/{{$sake_id}}">
                             <button-event
                                 button-text='更新したお酒を見る'
                                 button-color="pink"
@@ -21,8 +21,8 @@
                             </button-event>
                         </a>
                     </v-col>
-                    <v-col cols="12" class="text-center">
-                        <a href="/maintenance">
+                    <v-col cols="12" align="center">
+                        <a href="/maintenance" style="display:inline-block">
                             <button-event
                             button-text='{{__('master.ToMaintenance')}}'
                             button-color="primary"
@@ -34,18 +34,12 @@
                             </button-event>
                         </a>
                     </v-col>
-                            <v-col cols="12" class="text-center">
-                                <a href="#" class="link">
-                                    <p>{{__('master.Back')}}</p>
-                                </a>
-                            </v-col>
-                    </v-col>
                 </v-row>
 
             </v-container>
+
         </v-main>
     </v-app>
 </div>
-
 
 @endsection

@@ -1,6 +1,5 @@
 <template>
     <div>
-        <!-- <carousel autoplay="true" loop="true"> -->
         <carousel :per-page="perPage" :loop="true">
             <slide v-for="(imagePath, index) in images" :key='index'>
                 <div class="slider-inner">
@@ -34,8 +33,6 @@ export default {
         }
     },
     created(){
-        // console.log("@@@@@@ this.$props.images @@@@@@");
-        // console.log(this.$props.images);
     },
     methods: {
         openModal(e){
@@ -54,12 +51,26 @@ export default {
 
 <style scope>
 
-.VueCarousel{
-  height: 300px;
+/* .VueCarousel{
+  height: 260px;
+} */
+
+.VueCarousel-slide{
+    /* flex-grow: 0; */
+    flex-basis: unset !important;
+    /* flex-shrink: 0; */
+    /* user-select: none;
+    backface-visibility: hidden;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    outline: none; */
 }
-/* .VueCarousel-wrapper, .VueCarousel-inner, .VueCarousel-slide{ */
-  /* height: 100% !important; */
-/* } */
+
+.VueCarousel-wrapper{
+  height: 100% !important;
+  width: 370px;
+}
+
 .slider-inner {
   width: 170px;
   height: 200px;

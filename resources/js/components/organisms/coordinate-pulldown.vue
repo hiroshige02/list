@@ -1,29 +1,28 @@
 <template>
     <div>
-        <v-col cols="12" class="d-flex no-gutters">
-            <v-col cols=6>
-                <pulldown
-                :label="collectionLabel"
-                :item-array="classes"
-                :post-name="classPostName"
-                eventName="coordinateChange"
-                @coordinateChange="classChange"
-                >
-                </pulldown>
-            </v-col>
-            <v-col cols=6>
-                <pulldown
-                :label="selectionLabel"
-                :item-array="selections"
-                :post-name="selectionPostName"
-                eventName="selectionChange"
-                @selectionChange="selectionChanged"
-                :if-disabled="inactive"
-                ></pulldown>
-            </v-col>
+    <v-row justify="center no-gutters">
+        <v-col cols="6" sm="4">
+            <pulldown
+            :label="collectionLabel"
+            :item-array="classes"
+            :post-name="classPostName"
+            eventName="coordinateChange"
+            @coordinateChange="classChange"
+            >
+            </pulldown>
         </v-col>
-
-        <search-result :datas="datas" :maintenance="isMaintenance" v-show="searchResult" ></search-result>
+        <v-col cols="6" sm="4">
+            <pulldown
+            :label="selectionLabel"
+            :item-array="selections"
+            :post-name="selectionPostName"
+            eventName="selectionChange"
+            @selectionChange="selectionChanged"
+            :if-disabled="inactive"
+            ></pulldown>
+        </v-col>
+    </v-row>
+    <search-result :datas="datas" :maintenance="isMaintenance" v-show="searchResult" ></search-result>
     </div>
 </template>
 

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div style="text-align:center">
         <form action="/sake/search" method="post">
             <input type="hidden" name="_token" :value="csrf">
             <input v-if="maintenanceAddress" type="hidden" name="maintenance" :value='true'>
@@ -13,7 +13,7 @@
                     </li>
                 </ul>
             </div>
-            <v-col cols="12" class="text-center">
+            <v-col cols="12" align="center">
                 <input type="submit" value="もっと見る">
             </v-col>
         </form>
@@ -34,23 +34,14 @@
             maintenanceAddress: this.$props.maintenance,
         }
     },
-    computed: {
-        // more: function() {
-        //     return this.$data.allIds.length > 5
-        // }
-    },
     watch: {
         datas: function(){
-
             this.$data.allIds = [];
             this.$data.resultDatas = [];
-
             this.$data.allIds = Object.keys(this.$props.datas);
-
             this.$data.resultDatas = Object.entries(this.$props.datas)
                                     .map(([id, item]) => ({id, item}))
                                     .slice(0,5);
-
         }
     },
   }

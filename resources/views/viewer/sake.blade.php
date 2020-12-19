@@ -21,7 +21,10 @@
 
                 @if(!empty($images))
                     <v-row justify="center" no-gutters>
-                        <v-col cols="12">
+                        <v-col cols="12" class="d-flex no-gutters">
+                            <v-col cols="3">
+                                <p>{{__('master.Picture')}}</p>
+                            </v-col>
                             <!-- カルーセル -->
                             <carousel-list
                             :per-page="{{ $set_per_page }}"
@@ -32,8 +35,8 @@
                 @endif
 
                 {{-- グラフ表示 --}}
-                <v-row justify="center">
-                    <v-col cols=12>
+                <v-row justify="center" no-gutters>
+                    <v-col cols="12" sm="9">
                         <radar-chart
                         :rader-data='@json($rader_data)'
                         sake-name="{{ $datas['name']['value'] }}">
@@ -41,16 +44,6 @@
                     </v-col>
                 </v-row>
 
-
-                <v-row justify="center">
-                    @if(!empty($back_to))
-                        <a href="{{ $back_to }}" class="link">
-                    @else
-                        <a href="/maintenance" class="link">
-                    @endif
-                            <p> {{__('master.Back')}}</p>
-                        </a>
-                </v-row>
             </v-container>
 
         </v-main>

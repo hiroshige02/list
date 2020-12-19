@@ -36,7 +36,6 @@ class MaintenanceController extends Controller
      *
      * @return void
      */
-
     public function index()
     {
 
@@ -53,8 +52,6 @@ class MaintenanceController extends Controller
         foreach(MasterDefine::AMINO_ACID_DEGREES as $key => $value){
             $selections_2[] = ['text' => $value,'value' => $key];
         }
-
-        // var_dump($selections_1);exit;
 
         $viewData['maker_selections'] = [
             'name_1' => 'maker_class',

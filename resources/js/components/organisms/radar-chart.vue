@@ -26,7 +26,7 @@
                 title: {  // タイトル
                     display: true,
                     fontSize: 20,
-                    text: "個人評価"
+                    text: "個人評価グラフ"
                 },
                 legend: {
                     position: 'bottom', // 凡例の表示位置

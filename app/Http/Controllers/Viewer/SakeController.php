@@ -133,18 +133,8 @@ class SakeController extends Controller
         ceil(count($sakes)/$per_page) : count($sakes)/$per_page;
         $viewData['total_pages'] = $total_pages;
 
-        // Log::debug('piennnn');
-        // Log::debug(count($sakes));
-        // Log::debug($total_pages);
-
-        // Log::debug(count($sakes)/$per_page);
-        // Log::debug(ceil(count($sakes)/$per_page));
-
-
         $viewData['title'] = "検索結果";
         $viewData['datas'] = $datas;
-
-        // var_dump($viewData);exit;
 
         return view('viewer.searched', $viewData);
     }

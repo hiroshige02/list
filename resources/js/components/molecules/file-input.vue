@@ -35,13 +35,8 @@
 
         }
     },
-    created(){
-        console.log('bbbbbbbbbbbbb');
-        console.log(this.$props.value);
-    },
     methods: {
         decreaseInput(){
-            console.log('comecomecomexome');
             this.$refs.file_input.remove();
         }
     }

@@ -1,16 +1,14 @@
 <template>
-    <div>
-        <v-col
-        v-for="(sake, i) in sakes"
-        :key="i"
-        cols="12"
-        >
-            <v-card
-            color="white"
-            class="d-inline-block mx-auto"
-            width="100%"
-            >
-                <a :ref="sake.sake_id" href="#" @click="toSpecifics(sake,page)">
+    <v-row justify="center">
+        <v-col v-for="(sake, i) in sakes" :key="i" cols="12" sm="9">
+            <a :ref="sake.sake_id" href="#" style="width:100%">
+
+                <v-card
+                color="white"
+                class="d-inline-block mx-auto"
+                width="100%"
+                @click="toSpecifics(sake,page)"
+                >
                     <div class="d-flex flex-no-wrap" justify="left">
                         <v-avatar v-if="sake.image_path" class="ma-3" size="125" tile>
                             <v-img :src="sake.image_path"></v-img>
@@ -24,10 +22,11 @@
                             </v-card-title>
                         </div>
                     </div>
-                </a>
-            </v-card>
+                </v-card>
+
+            </a>
         </v-col>
-    </div>
+    </v-row>
 </template>
 
 <script>

@@ -1,53 +1,81 @@
-
 .hide {
     display: none;
 }
 
-// @media (max-width: 599px) {
-    /* スマホ大より小さいことを想定　参考は以下
-    http://www.yuruyuru-blog.jp/blog-posts/2018/11/14/responsive.html
-    */
+h1 {
+    font-weight: bold;
+    text-align: center;
+    margin-top: 20px;
+}
 
+.v-text-field__slot input[type=text] {
+    font-size: 20px;
+}
+
+.large-button {
+    font-size: 16px;
+}
+
+.incre-del-button {
+    font-size: 30px;
+}
+
+.login-link {
+    height: 70px;
+    width: 70px;
+}
+
+.login-icon {
+    position: absolute;
+    bottom: -70px;
+    right: 100px;
+    background-size: contain;
+    z-index: 1000;
+}
+
+.title-container {
+    margin-top: 40px;
+}
+
+a {
+    text-decoration: none !important;
+    display: inline-block !important;
+}
+
+p {
+    margin-bottom: 0px !important;
+}
+
+.area {
+    cursor: pointer;
+}
+
+@media screen and (max-width: 600px) {
     .body-container {
         position: relative;
         width: 400px;
         margin: 0 auto;
-      }
-
-      .text-center {
-        text-align: center;
-      }
-
-      h1 {
-        font-weight: bold;
-        text-align: center;
-        margin-top: 20px;
-      }
-
-      .v-text-field__slot input[type=text] {
-          font-size: 20px;
-      }
-
-      .large-button {
-          font-size: 16px;
-      }
-
-      .login-link {
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        width: 70px;
-        height: 70px;
-        background-size:contain;
-      }
-
-      .logout-button {
-        position: absolute;
-        top: 0;
-        left: 0;
     }
 
-    a {
-        text-decoration: none !important;
-        display: inline-block !important;
+    .logout-button {
+        position: absolute;
+        top: -30px;
+        left: 50px;
     }
+
+}
+
+@media screen  and (min-width: 601px) {
+    .body-container {
+        position: relative;
+        width: 600px;
+        margin: 0 auto;
+    }
+
+    .logout-button {
+        position: absolute;
+        top: -30px;
+        left: 100px;
+    }
+
+}

@@ -1,56 +1,53 @@
-@extends('layouts.app')
-
-@section('contents')
-
 <div id="app">
-<v-app>
-<v-main>
+    <v-app>
+        <v-main>
 
-    <v-container>
+            @extends('layouts.app')
+            @section('contents')
 
-        <form method="POST" action="{{ route('login') }}">
-            @csrf
+            <v-container>
 
-        <v-row justify="center">
+                <form method="POST" action="{{ route('login') }}">
+                    @csrf
 
-            {{-- error-messages='{{ $errors->first('email') }}' --}}
-            <v-col cols="12">
-                <label-text
-                text-title="{{__('master.Account')}}"
-                name="email"
-                value="{{ old('email') }}"
-                error-messages="{{ $errors->first('email') }}"
-                >
-                </label-text>
-                <label-text
-                text-title="{{__('master.Password')}}"
-                type="password"
-                name="password"
-                value="{{ old('password') }}"
-                error-messages="{{ $errors->first('password') }}"
-                >
-                </label-text>
+                    <v-row justify="center">
+                        <v-col cols="12" sm="8">
+                            <label-text
+                            text-title="{{__('master.Account')}}"
+                            name="email"
+                            value="{{ old('email') }}"
+                            error-messages="{{ $errors->first('email') }}"
+                            >
+                            </label-text>
+                            <label-text
+                            text-title="{{__('master.Password')}}"
+                            type="password"
+                            name="password"
+                            value="{{ old('password') }}"
+                            error-messages="{{ $errors->first('password') }}"
+                            >
+                            </label-text>
 
-                <v-col cols="12" class="text-center large-button">
-                    <button-event
-                    type="submit"
-                    button-text='{{$title}}'
-                    button-color="pink"
-                    :is-large='true'
-                    height="50px"
-                    width="150px"
-                    font="large-button"
-                    event-name="login"
-                    >
-                    </button-event>
-                </v-col>
+                            <v-col cols="12" class="large-button" align="center">
+                                <button-event
+                                type="submit"
+                                button-text='{{$title}}'
+                                button-color="pink"
+                                :is-large='true'
+                                height="50px"
+                                width="150px"
+                                font="large-button"
+                                event-name="login"
+                                >
+                                </button-event>
+                            </v-col>
 
-            </v-col>
-        </v-row>
-    </form>
+                        </v-col>
+                    </v-row>
+                </form>
 
-    </v-container>
-    </v-main>
+            </v-container>
+        </v-main>
     </v-app>
 </div>
 

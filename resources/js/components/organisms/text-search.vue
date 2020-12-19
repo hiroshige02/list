@@ -1,8 +1,8 @@
 <template>
-    <div class="no-gutters">
+    <div align="center">
 
-        <div class="d-flex no-gutters">
-            <v-col cols="9">
+        <v-row justify="center" d-flex no-gutters>
+            <v-col cols="9" sm="8">
                 <v-text-field
                 label="酒名"
                 outlined
@@ -13,7 +13,7 @@
                 v-model="value">
                 </v-text-field>
             </v-col>
-            <v-col cols=3 v-on:click="search()">
+            <div style='float:left' v-on:click="search()">
                 <button-event
                 button-text="検索"
                 button-color="primary"
@@ -23,8 +23,8 @@
                 font="large-button"
                 >
                 </button-event>
-            </v-col>
-        </div>
+            </div>
+        </v-row>
 
         <!-- 検索結果 -->
         <search-result :datas="datas" :maintenance="isMaintenance" v-show="searchResult"></search-result>

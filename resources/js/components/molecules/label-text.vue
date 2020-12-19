@@ -1,6 +1,6 @@
 <template>
     <div>
-        <p class="label-text">{{textTitle}}</p>
+        <p>{{textTitle}}</p>
         <input-text
         :type="type"
         :value="value"

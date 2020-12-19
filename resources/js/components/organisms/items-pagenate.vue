@@ -1,15 +1,12 @@
 <template>
     <div>
-        <v-row dense>
-            <v-col cols="12">
-                <list-index
-                :datas="lists"
-                :current-page="currentPage"
-                :maintenanceAddress="isMaintenance"
-                >
-                </list-index>
-            </v-col>
-        </v-row>
+        <list-index
+        :datas="lists"
+        :current-page="currentPage"
+        :maintenanceAddress="isMaintenance"
+        >
+        </list-index>
+
         <v-row justify="center">
             <v-col cols=12>
                 <pagenation
