@@ -2,6 +2,7 @@
 <html lang="{{ config('app.locale','ja') }}">
     <head>
         <meta charset="UTF-8">
+        <meta http-equiv="Cache-Control" content="no-cache">
         {{--
             <link href="{{ mix('/css/app.css') }}" rel="stylesheet">
         mix-manifest.json内のパスが/public/css/app.cssに変更できるまで不使用
@@ -16,26 +17,31 @@
 
     <body>
         <div class="body-container">
-            <div class="title-container">
-                <h1>{{ $title }}</h1>
-            </div>
-            {{-- ログイン画面のリンク --}}
+            <v-app id="app">
+                <v-main>
 
-            <div class="login-icon">
-                <a href="/login">
-                    <img class="login-link" src="/storage/app/public/img/display/login.jpg">
-                </a>
-            </div>
+                    <div class="body-container">
+                        <div class="title-container">
+                            <h1>{{ $title }}</h1>
+                        </div>
+                    </div>
 
-            @yield('contents')
+                    {{-- ログイン画面のリンク --}}
+                    <div class="login-icon">
+                        <a href="/login">
+                            <img class="login-link" src="/storage/app/public/img/display/login.jpg">
+                        </a>
+                    </div>
+                    <a href="/" class="link-top">TOPヘ</a>
 
-            <div style="width:70px; height:70px;">
-            </div>
+                    @yield('contents')
+
+                </v-main>
+            </v-app>
         </div>
-
-        <script src="/public/js/app.js"></script>
-        <script src="/public/js/maintenance.js"></script>
     </body>
+    <script src="/public/js/app.js"></script>
+    <script src="/public/js/maintenance.js"></script>
 </html>
 
 

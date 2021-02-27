@@ -2,7 +2,7 @@
     <div>
         <magnify-button
             :button-color="buttonColor"
-            :icon-type="iconType" 
+            :icon-type="iconType"
             :is-large="isLarge"
             :is-normal="isNormal"
         >
@@ -10,7 +10,7 @@
     </div>
 </template>
 
-<script> 
+<script>
   export default {
     props: ['buttonColor','iconType','isLarge','isNormal']
   }

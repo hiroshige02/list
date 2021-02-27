@@ -1,6 +1,6 @@
 <template>
     <div>
-    <v-row justify="center no-gutters">
+    <v-row justify="center" no-gutters>
         <v-col cols="6" sm="4">
             <pulldown
             :label="collectionLabel"
@@ -22,6 +22,7 @@
             ></pulldown>
         </v-col>
     </v-row>
+    <p v-show="searched" align="center">該当のお酒がありませんでした。</p>
     <search-result :datas="datas" :maintenance="isMaintenance" v-show="searchResult" ></search-result>
     </div>
 </template>
@@ -41,12 +42,12 @@
             datas: [],
             searchResult: false,
             inactive: true,
+            searched: false,
             isMaintenance: this.$props.maintenance
         }
     },
 
     created(){
-
         this.$data.classes = this.$props.items['classes'];
         this.$data.selections = [];
         this.$data.collectionLabel = this.$props.items['label_1'],
@@ -56,7 +57,7 @@
     },
     watch: {
         datas: function(newValue, oldValue) {
-        this.$data.searchResult = Object.keys(newValue).length > 0;
+            this.$data.searchResult = Object.keys(newValue).length > 0;
         },
     },
     methods: {
@@ -83,9 +84,13 @@
                 'class': that.$data.selectedClass,
                 'search_text': selectedValue,
                 'search_type': 2
-            },)
+            })
             .then(function(res) {
-                console.log(res.data)
+                that.$data.searched = false;
+                // 該当データ無し
+                if(Object.keys(res.data).length < 1) {
+                    that.$data.searched = true;
+                }
                 //検索結果をリストに反映
                 that.$data.datas = res.data;
             }).catch(function(error){

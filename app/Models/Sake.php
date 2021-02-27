@@ -51,14 +51,23 @@ use Illuminate\Database\Eloquent\SoftDeletes;
     ];
 
     /**
+     * joinしたテーブルからsakes.idでデータを取得する
+     *
      * @param int $sake_id
-     * @return App\Models\Sake|null $joined_sake
+     * @return Illuminate\Database\Eloquent\Collection
      */
     public static function getSakeDatasFromId($sake_id){
         $joined_sakes = static::getJoinedSakeData();
         return $joined_sakes->where('sakes.id', $sake_id);
     }
 
+    /**
+     *
+     * sakes, personal_evaluations, maker_evaluationsをjoinし
+     * 表示用カラムを取得する
+     *
+     * @return \Illuminate\Database\Eloquent\Collection $joined_sakes
+     */
     public static function getJoinedSakeData(){
         $joined_sakes = Sake::join('personal_evaluations','sakes.id','=','personal_evaluations.sake_id')
         ->join('maker_evaluations','sakes.id','=','maker_evaluations.sake_id')
@@ -70,25 +79,27 @@ use Illuminate\Database\Eloquent\SoftDeletes;
     }
 
     /**
+     * 名前からアイテムをあいまい検索
+     *
      * @param string $name
-     * @return App\Models\Sake $sakes
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public static function getSakeFromName($name){
         $sakes = static::getJoinedSakeData();
-        return $sakes->where('name', 'like', $name)->get();
+
+        return $sakes->where('name', 'like', "%$name%")->get();
     }
 
     /**
-     * @param string class
+     * メーカーの評価からアイテムを検索
+     *
+     * @param string $class //sake_degreeかamino_acid_degreeのいずれか
      * @param int $maker_evaluation
-     * @return App\Models\Sake $sakes
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public static function getSakeFromMakerEv($class ,$evaluation){
-        Log::debug('********** getSakeFromMakerEv ************');
         $joined_sakes = static::getJoinedSakeData();
-
         return $joined_sakes->where($class, $evaluation)->get();
-        // return $sake_datas;
     }
 
     /**

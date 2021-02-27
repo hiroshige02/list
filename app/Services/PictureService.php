@@ -28,7 +28,7 @@ class PictureService
     /**
      * 画像IDが編集中の酒IDと結びついているかチェック
      *
-     * @param array $delete_ids
+     * @param array $picture_ids
      * @param int $id
      *
      */
@@ -36,7 +36,7 @@ class PictureService
         foreach($picture_ids as $p_id){
             $picture = Picture::find($p_id);
             if(empty($picture) || ($picture->sake_id != $id)){
-                abort(505);
+                abort(505, '不正な画像データです。');
             }
         }
         return;
@@ -48,8 +48,9 @@ class PictureService
      *
      * @param int $user_id
      * @param array $upload_files
-     * @param \Illuminate\Validation\Validator $valudator
-     * @return \Illuminate\Validation\Validator $valudator
+     * @param \Illuminate\Validation\Validator $validator
+     *
+     * @return \Illuminate\Validation\Validator $validator
      *
      */
     public function validateStoreImage($user_id, $upload_files, $validator){
@@ -60,12 +61,13 @@ class PictureService
         }
 
         foreach ($upload_files as $file) {
-            Log::debug('****** file file ********::');
-            Log::debug(print_r($file,true));
-            $post_file = new File($file);
-            if(empty($post_file)){
-                return;
+            if(empty($file->getSize())){
+                $validator->errors()->add('file', "画像サイズが2M以下か確認してください。");
+                Log::info('failed image file update');
+                return $validator;
             }
+            $post_file = new File($file);
+
             $file_name = $file->getClientOriginalName();
             $extension = $post_file->extension();
 
@@ -88,13 +90,12 @@ class PictureService
      *
      * @param int $sake_id
      * @param array $not_display
+     * @param boolean $if_confirm
      * @return array $image_datas
      *
      */
     public function getS3ImageData($sake_id,$not_display=[],$if_confirm=false){
         $image_datas = [];
-
-        // var_dump($not_display);exit;
 
         $images = Picture::whereSakeId($sake_id)->get();
         if (!empty($images)) {
@@ -134,7 +135,7 @@ class PictureService
     }
 
     /**
-     * ユーザーIDに結びつく仮ディスク内の画像パスの配列を取得する
+     * ユーザーIDに結びつく仮ディスク内の画像パスのデータを取得する
      *
      * @param int $user_id
      * @param boolean $if_confirm
@@ -174,6 +175,26 @@ class PictureService
         return;
     }
 
+    /**
+     * 登録用のPictureデータを作る
+     *
+     * @param int $user_id
+     * @param int $sake_id
+     * @return array $picture_datas
+     *
+     */
+    public function makePictureData($sake_id, $user_id) {
+        $file_paths = Storage::disk('public')->files("img/tmp/{$user_id}");
+        $picture_datas = [];
+        foreach($file_paths as $f){
+            $path = Storage::disk('s3')->putFile('sake', 'storage/app/public/' . $f, 'public');
+            $picture = new Picture;
+            $picture->image_path = Storage::disk('s3')->url($path);
+            $picture->sake_id = $sake_id;
+            $picture_datas[] = $picture;
+        }
+        return $picture_datas;
+    }
 
 }
 

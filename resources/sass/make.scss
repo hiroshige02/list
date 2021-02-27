@@ -1,3 +1,8 @@
+#app {
+    // 背景検討中
+    // background-image: url('/storage/app/public/img/display/wood-texture_00016.jpg');
+}
+
 .hide {
     display: none;
 }
@@ -6,6 +11,10 @@ h1 {
     font-weight: bold;
     text-align: center;
     margin-top: 20px;
+}
+
+ul {
+    list-style: none;
 }
 
 .v-text-field__slot input[type=text] {
@@ -35,6 +44,7 @@ h1 {
 
 .title-container {
     margin-top: 40px;
+    position: relative;
 }
 
 a {
@@ -52,7 +62,6 @@ p {
 
 @media screen and (max-width: 600px) {
     .body-container {
-        position: relative;
         width: 400px;
         margin: 0 auto;
     }
@@ -63,11 +72,16 @@ p {
         left: 50px;
     }
 
+    .link-top {
+        position: absolute;
+        top: 10px;
+        left: 50px;
+    }
+
 }
 
 @media screen  and (min-width: 601px) {
     .body-container {
-        position: relative;
         width: 600px;
         margin: 0 auto;
     }
@@ -75,6 +89,12 @@ p {
     .logout-button {
         position: absolute;
         top: -30px;
+        left: 100px;
+    }
+
+    .link-top {
+        position: absolute;
+        top: 10px;
         left: 100px;
     }
 

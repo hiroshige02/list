@@ -95,7 +95,7 @@ return [
     'numeric' => 'The :attribute must be a number.',
     'password' => 'The password is incorrect.',
     'present' => 'The :attribute field must be present.',
-    'regex' => 'The :attribute format is invalid.',
+    'regex' => ':attribute が不正な形式です',
     'required' => ':attribute は必須です',
     'required_if' => 'The :attribute field is required when :other is :value.',
     'required_unless' => 'The :attribute field is required unless :other is in :values.',
@@ -106,7 +106,7 @@ return [
     'same' => 'The :attribute and :other must match.',
     'size' => [
         'numeric' => 'The :attribute must be :size.',
-        'file' => 'The :attribute must be :size kilobytes.',
+        'file' => ':attributeは最大で:size kilobytes です。.',
         'string' => 'The :attribute must be :size characters.',
         'array' => 'The :attribute must contain :size items.',
     ],
@@ -114,7 +114,7 @@ return [
     'string' => ':attribute must be a string.',
     'timezone' => 'The :attribute must be a valid zone.',
     'unique' => 'The :attribute has already been taken.',
-    'uploaded' => 'The :attribute failed to upload.',
+    'uploaded' => ':attributeのアップロードに失敗しました。',
     'url' => 'The :attribute format is invalid.',
     'uuid' => 'The :attribute must be a valid UUID.',
 
@@ -160,7 +160,8 @@ return [
         'recommend_point' => 'おすすめ度',
         'sake_degree' => '日本酒度',
         'amino_acid_degree' => 'アミノ酸度',
-        'file' => '画像',
+        'file.*' => '画像',
+        'memo' => 'コメント'
     ],
 
 ];

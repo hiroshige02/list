@@ -63,16 +63,26 @@ class LoginController extends Controller
         return view('auth.login', $viewData);
     }
 
+    /**
+     * ログイン画面の入力項目をチェック
+     * @param \Illuminate\Http\Request
+     * @return void
+     */
     protected function validateLogin(Request $request)
     {
         $request->validate([
-            // $this->username() => 'required|string|email|max:255|unique:users|bail',
             $this->username() => 'required|email|string|max:255|bail',
             'password' => 'required|string|max:255|bail'
         ]);
 
     }
 
+    /**
+     * ログアウト後の遷移先を指定
+     *
+     * @param \Illuminate\Http\Request
+     * @return void
+     */
     protected function loggedOut(Request $request)
     {
         return redirect('/');

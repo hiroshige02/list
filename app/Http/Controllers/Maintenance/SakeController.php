@@ -56,21 +56,21 @@ class SakeController extends Controller
      *
      * @param int $sake_id
      * @param int $page
-     * @param \Illuminate\Http\Request
+     * @param \Illuminate\Http\Request $request
      * @return void
      *
      */
-    public function pageSet($sake_id, $page, Request $request){
+    public function pageSet($sake_id, $page, Request $request)
+    {
         $request->session()->put('page_number', $page);
         return redirect("/maintenance/sake/{$sake_id}");
-
     }
 
     /**
      * 酒の詳細表示画面に遷移
      *
      * @param int $sake_id
-     * @param \Illuminate\Http\Request
+     * @param \Illuminate\Http\Request $request
      * @return void
      *
      */
@@ -83,13 +83,12 @@ class SakeController extends Controller
             abort(500);
         }
 
-
         $viewData = [];
         $viewData['title'] = $joined_data->name . "({$joined_data->name_kana})";
 
         $datas = $this->sakeService->getConfirmColumns();
-        foreach($datas as $column => &$data){
-            if(!empty($data['pulldown']) && !empty($joined_data->{$column})){
+        foreach ($datas as $column => &$data) {
+            if (!empty($data['pulldown']) && !empty($joined_data->{$column})) {
                 $datas[$column]['value'] = $data['pulldown'][$joined_data->{$column}];
                 //プルダウン選択肢は不要
                 unset($data['pulldown']);
@@ -110,7 +109,7 @@ class SakeController extends Controller
         $rader_data = $this->sakeService->getRaderDatas($joined_data);
         $viewData['rader_data'] = $rader_data;
 
-        if(!empty($request->session()->get('prefecture'))) {
+        if (!empty($request->session()->get('prefecture'))) {
             $viewData['back_to'] = "/maintenance/sake/prefecture/{$request->session()->get('prefecture')}";
         }
 
@@ -118,9 +117,10 @@ class SakeController extends Controller
     }
 
     /**
-     * 作成画面
+     * アイテム作成画面に遷移
      *
-     * @param \Illuminate\Http\Request
+     * @param \Illuminate\Http\Request $request
+     * @return void
      */
     public function create(Request $request)
     {
@@ -133,7 +133,6 @@ class SakeController extends Controller
 
         //画像データ取得のために
         $flag = false;
-
         $old_input = null;
         $old_prefecture = null;
 
@@ -141,11 +140,11 @@ class SakeController extends Controller
         if (!empty($request->session()->get('preserve'))) {
             $old_input = $request->old();
             $images = $this->pictureService->getTentativeImageData($user_id);
-        }elseif(!empty($request->session()->get('back'))){
+        } elseif (!empty($request->session()->get('back'))) {
             $flag = true;
             $old_input = $request->old();
             $images = $this->pictureService->getTentativeImageData($user_id);
-        }else{
+        } else {
             //最初の遷移時には仮ディスクの画像は全て消去する
             $this->pictureService->deleteTentativeImageData($user_id);
         }
@@ -155,23 +154,28 @@ class SakeController extends Controller
         $viewData['title'] = '新規登録';
         $viewData['sake_info'] = $this->sakeService->getSakeOptions();
 
-        if(isset($old_input['prefecture'])){
+        if (isset($old_input['prefecture'])) {
             $old_prefecture = $old_input['prefecture'];
         }
 
         $viewData['tasts'] = $this->sakeService->getTasteOptions($old_input);
-        $viewData['evaluations'] = $this->sakeService->getMakerEvaluations($old_input,$flag);
-        $viewData['prefecture'] = $this->sakeService->getPrefectureOptions($old_prefecture,$flag);
+        $viewData['evaluations'] = $this->sakeService->getMakerEvaluations($old_input, $flag);
+        $viewData['prefecture'] = $this->sakeService->getPrefectureOptions($old_prefecture, $flag);
         $viewData['input_images'] = $images;
 
         return view('maintenance.sake-create', $viewData);
     }
 
+    /**
+     * バリデーションルールを返す
+     *
+     * @return array
+     */
     public function getSakeValidationRules()
     {
         $rules = [
             'name' => ['required','string','max:256'],
-            'name_kana' => ['required','string','max:256','regex:/^[ァ-ヶー]+$/u'],
+            'name_kana' => ['required','string','max:256','regex:/^[ァ-ヶー　]+$/u'],
             'kura' => ['required','string','max:256'],
             'prefecture' => ['required','string'],
             'sweetness' => ['required','string'],
@@ -181,41 +185,50 @@ class SakeController extends Controller
             'recommend_point' => ['required','string'],
             'sake_degree' => ['nullable','string'],
             'amino_acid_degree' => ['nullable','string'],
-            'memo' => ['string','max:1000'],
-            'file' => 'nullable|array',
-            'file.*' => ['nullable','image','max:2048'],
+            'memo' => ['required','string','max:1000'],
+            // 'file' => 'nullable|array',
+            'file.*' => ['nullable','max:5000'],
         ];
 
         return $rules;
     }
 
-   /**
-     * バリデーション用オリジナルメッセージ
-     *
-     * @param \Illuminate\Http\Request
-     */
-    public function customMessages(){
+    /**
+      * バリデーション用オリジナルメッセージ
+      *
+      * @return array
+      *
+      */
+    public function customMessages()
+    {
         return [
-            'name_kana.regex' => '酒名(全角カタカナ)はカタカナのみで入力してください'
+            'name_kana.regex' => '酒名(全角カタカナ)はカタカナのみで入力してください',
+            // 'file.*.max' => '最大ファイルサイズを超えています'
         ];
     }
 
     /**
-     * 作成確認画面遷移
+     * アイテム作成確認画面遷移
      *
      * @param \Illuminate\Http\Request
+     * @return void
+     *
      */
-    function createConfirm(Request $request)
+    public function createConfirm(Request $request)
     {
         $user_id = Auth::user()->id;
 
         //バリデーション
-        $validator = Validator::make($request->all(),
-        $this->getSakeValidationRules(),$this->customMessages());
+        $validator = Validator::make(
+            $request->all(),
+            $this->getSakeValidationRules(),
+            $this->customMessages()
+        );
 
+        // var_dump($validator->errors());exit;
         if (!empty($request->file('file'))) {
             //上記メソッドでバリデーションを通過した画像は仮ディスクに保管される
-            $validator = $this->pictureService->validateStoreImage($user_id,$request->file('file'),$validator);
+            $validator = $this->pictureService->validateStoreImage($user_id, $request->file('file'), $validator);
         }
 
         if ($validator->fails()) {
@@ -240,18 +253,28 @@ class SakeController extends Controller
         return view('maintenance.sake-create-confirm', $viewData);
     }
 
-
-    function createComplete(Request $request){
+    /**
+     * アイテム作成完了画面遷移
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return void
+     *
+     */
+    public function createComplete(Request $request)
+    {
         //戻るボタン押下の際
         $back = $request->post('back', false);
-        if($back !== false){
+        if ($back !== false) {
             $request->session()->flash('back', true);
             return redirect('/maintenance/sake/create')->withInput();
         }
 
         //バリデ〜ション
-        $validator = Validator::make($request->all(),
-        $this->getSakeValidationRules(),$this->customMessages());
+        $validator = Validator::make(
+            $request->all(),
+            $this->getSakeValidationRules(),
+            $this->customMessages()
+        );
         if ($validator->fails()) {
             return redirect('/maintenance/sake/create')->withInput()
             ->withErrors($validator);
@@ -259,52 +282,34 @@ class SakeController extends Controller
 
         //sakesデータ
         $sake = new Sake;
-        $sake->name = $request->post('name');
-        $sake->name_kana = $request->post('name_kana');
-        $sake->kura = $request->post('kura');
-        $sake->memo = $request->post('memo');
-        //post値をキーに置き換えるような
-        $sake->prefecture = array_search($request->post('prefecture'),MasterDefine::PREFECTURES);
-
-        //personal_evaluationsデータ
         $personal = new PersonalEvaluation;
-        $personal->sweetness = $request->post('sweetness');
-        $personal->acidity = $request->post('acidity');
-        $personal->richness = $request->post('richness');
-        $personal->cost_performance = $request->post('cost_performance');
-        $personal->recommend_point = $request->post('recommend_point');
-
-        //maker_evaluationsデータ
         $maker = new MakerEvaluation;
-        $maker->sake_degree = array_search($request->post('sake_degree'),MasterDefine::SAKE_DEGREES);
-        $maker->amino_acid_degree = array_search($request->post('amino_acid_degree'),MasterDefine::AMINO_ACID_DEGREES);
+
+        $post_data = $request->post();
+        $create_sake = $this->sakeService->makeSakeData($sake, $post_data);
+        $create_personal = $this->sakeService->makePersonalData($personal, $post_data);
+        $create_maker = $this->sakeService->makeMakerData($maker, $post_data);
 
         $user_id = Auth::user()->id;
 
-
         //トランザクション開始
-        DB::transaction(function () use ($sake,$personal,$maker,$request,$user_id) {
-            $sake->save();
-            $sake_id = $sake->id;
+        DB::transaction(function () use ($create_sake,$create_personal,$create_maker,$user_id) {
+            $create_sake->save();
+            $sake_id = $create_sake->id;
 
+            $create_personal->sake_id = $sake_id;
+            $create_personal->save();
+
+            $create_maker->sake_id = $sake_id;
+            $create_maker->save();
+
+            $pictures = [];
             if(Storage::disk('public')->exists("img/tmp/{$user_id}")){
-                $file_paths = Storage::disk('public')->files("img/tmp/{$user_id}");
-                // var_dump($file_paths);exit; //array(1) { [0]=> string(21) "img/tmp/1/english.jpg" }
-                foreach($file_paths as $f){
-                    $path = Storage::disk('s3')->putFile('sake', 'storage/app/public/' . $f, 'public');
-
-                    $picture = new Picture;
-                    $picture->image_path = Storage::disk('s3')->url($path);
-                    $picture->sake_id = $sake_id;
+                $pictures = $this->pictureService->makePictureData($sake_id, $user_id);
+                foreach($pictures as $picture) {
                     $picture->save();
                 }
             }
-
-            $personal->sake_id = $sake_id;
-            $personal->save();
-
-            $maker->sake_id = $sake_id;
-            $maker->save();
 
             //仮ディスクを削除
             $this->pictureService->deleteTentativeImageData($user_id);
@@ -318,13 +323,20 @@ class SakeController extends Controller
         return view('maintenance.sake-create-complete', $viewData);
     }
 
-
-    function edit($id,Request $request){
+    /**
+     * アイテム編集画面遷移
+     *
+     * @param int $id
+     * @param \Illuminate\Http\Request $request
+     * @return void
+     *
+     */
+    function edit($id, Request $request){
         //該当ID酒の存在チェック
         $sake = Sake::find($id);
         if(empty($sake)){
-            Log::info('sake edit NOT FOUND : id'.$id);
-            abort(500);
+            Log::info('sake edit NOT FOUND : id '.$id);
+            abort(500, '該当するお酒がありません。');
         }
 
         $sake_id = $sake->id;
@@ -337,6 +349,7 @@ class SakeController extends Controller
 
         $tentative_images = [];
         $delete_image_ids = [];
+
         if (!empty($request->session()->get('preserve'))) {
             $tentative_images = $this->pictureService->getTentativeImageData($user_id);
             if (!empty($request->old('delete_image_ids'))) {
@@ -391,7 +404,14 @@ class SakeController extends Controller
         return view('maintenance.sake-edit', $viewData);
     }
 
-
+    /**
+     * アイテム編集確認画面遷移
+     *
+     * @param int $id
+     * @param \Illuminate\Http\Request
+     * @return void
+     *
+     */
     function editConfirm($id, Request $request)
     {
         //「戻る」クリック
@@ -406,7 +426,8 @@ class SakeController extends Controller
         $this->getSakeValidationRules(),$this->customMessages());
 
         if(!empty($request->file('file'))){
-            $validator = $this->pictureService->validateStoreImage($user_id,$request->file('file'),$validator);
+            $validator = $this->pictureService
+            ->validateStoreImage($user_id,$request->file('file'),$validator);
         }
 
         if ($validator->fails()) {
@@ -449,7 +470,6 @@ class SakeController extends Controller
         $viewData['datas'] = $datas;
 
         $viewData['new_images'] = $new_images;
-        // var_dump($exist_images);exit;
         $viewData['exist_images'] = $exist_images;
         $viewData['sake_id'] = $id;
 
@@ -458,6 +478,11 @@ class SakeController extends Controller
 
 
     /**
+     * アイテム編集画面遷移
+     *
+     * @param int $id
+     * @param \Illuminate\Http\Request $requsest
+     * @return void
      *
      */
     function update($id,Request $request){
@@ -477,38 +502,20 @@ class SakeController extends Controller
         }
 
         $sake  = Sake::find($id);
-        if(empty($sake)){
+        $personal = PersonalEvaluation::whereSakeId($id)->first();
+        $maker = MakerEvaluation::whereSakeId($id)->first();
 
-
-
+        if(empty($sake) || empty($personal) || empty($maker)) {
             //エラー処理
-        }
-        $sake->name = $request->get('name');
-        $sake->name_kana = $request->get('name_kana');
-        $sake->name_kana = $request->get('name_kana');
-        $sake->kura = $request->get('kura');
-        $sake->memo = $request->get('memo');
-        //post値をキーに置き換えるような
-        $sake->prefecture = array_search($request->post('prefecture'),MasterDefine::PREFECTURES);
-
-        $sake_id = $sake->id;
-
-        $personal = PersonalEvaluation::whereSakeId($sake_id)->first();
-        if(!empty($personal_evaluation)){
-
-
-            //エラー処理
+            Log::info('sake update NOT FOUND : id'.$id);
+            abort(500);
         }
 
-        $personal->sweetness = $request->post('sweetness');
-        $personal->acidity = $request->post('acidity');
-        $personal->richness = $request->post('richness');
-        $personal->cost_performance = $request->post('cost_performance');
-        $personal->recommend_point = $request->post('recommend_point');
-
-        $maker = MakerEvaluation::whereSakeId($sake_id)->first();
-        $maker->sake_degree = array_search($request->post('sake_degree'),MasterDefine::SAKE_DEGREES);
-        $maker->amino_acid_degree = array_search($request->post('amino_acid_degree'),MasterDefine::AMINO_ACID_DEGREES);
+        //sakesデータ作成
+        $post_data = $request->post();
+        $update_sake = $this->sakeService->makeSakeData($sake, $post_data);
+        $update_personal = $this->sakeService->makePersonalData($personal, $post_data);
+        $update_maker = $this->sakeService->makeMakerData($maker, $post_data);
 
         $user_id = Auth::user()->id;
 
@@ -517,33 +524,23 @@ class SakeController extends Controller
             $delete_ids = $request->get('delete_image_ids');
 
             //酒と結びついたPictureかどうか確認。一つでもあったらエラー
-            foreach($delete_ids as $d_id){
-                $picture = Picture::find($d_id);
-                if(empty($picture) || ($picture->sake_id != $id)){
-                    //エラー処理
-                    var_dump('NOT RELATED error!!');
-                }
-            }
+            $this->pictureService->checkSakeRelation($delete_ids, $id);
+        }
+
+        $pictures = [];
+        if(Storage::disk('public')->exists("img/tmp/{$user_id}")){
+            $pictures = $this->pictureService->makePictureData($id, $user_id);
         }
 
         //トランザクション開始
-        DB::transaction(function () use ($id,$sake,$personal,$maker,$request,$user_id,$delete_ids) {
-            $sake->update();
+        DB::transaction(function () use ($id,$update_sake,$update_personal,$update_maker,$pictures,$user_id,$delete_ids) {
+            $update_sake->update();
+            $update_personal->update();
+            $update_maker->update();
 
-            if(Storage::disk('public')->exists("img/tmp/{$user_id}")){
-                $file_paths = Storage::disk('public')->files("img/tmp/{$user_id}");
-                foreach($file_paths as $f){
-                    $path = Storage::disk('s3')->putFile('sake', 'storage/app/public/' . $f, 'public');
-
-                    $picture = new Picture;
-                    $picture->image_path = Storage::disk('s3')->url($path);
-                    $picture->sake_id = $id;
-                    $picture->save();
-                }
+            foreach($pictures as $picture) {
+                $picture->save();
             }
-
-            $personal->update();
-            $maker->update();
 
             foreach($delete_ids as $d_id){
                 $picture =  Picture::find($d_id);
@@ -560,22 +557,23 @@ class SakeController extends Controller
         $request->session()->regenerateToken();
 
         $viewData = [];
-        $viewData['sake_id'] = $sake_id;
-
+        $viewData['sake_id'] = $id;
         $viewData['title'] = '編集完了';
-        // 更新のための処理
 
         return view('maintenance.sake-edit-complete', $viewData);
     }
 
 
-
+    /**
+     * storage/app/public/img 以下の仮ディスクのイメージファイルを削除する
+     *
+     * @param \Illuminate\Http\Request
+     * @return void
+     */
     public function tentativeImageDelete(Request $request){
 
         $user_id = $request->get('user_id');
         $image_source = $request->get('image_source');
-
-        //新たに画像を登録するｓ時
 
         //そもそもpostしちゃいけないのでは？？要修正
         if(!empty($request->post('create_flag'))){
@@ -586,9 +584,7 @@ class SakeController extends Controller
             Storage::disk('public')->delete("img/tmp/{$user_id}/{$image_name}");
 
         }
-
         return;
-
     }
 
 

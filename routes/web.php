@@ -23,11 +23,10 @@ Route::get('/sake/{id}', 'Viewer\SakeController@show');
 Route::get('/', 'Viewer\TopController@welcome');
 Route::post('/sake/search', 'Viewer\SakeController@search');
 Route::get('/sake/{sake_id}/{page}', 'Viewer\SakeController@pageSet');
+Route::get('/register', 'Auth\RegisterController@showRegistrationForm')->name('register');
 
 // ログイン済みルート
 Route::group(['middleware' => ['auth']], function () {
-    Route::get('/register', 'Auth\RegisterController@showRegistrationForm')->name('register');
-    Route::post('/register', 'Auth\RegisterController@register')->name('register');
     Route::post('/logout', 'Auth\LoginController@logout')->name('logout');
 
     Route::get('/maintenance', 'Maintenance\MaintenanceController@index');

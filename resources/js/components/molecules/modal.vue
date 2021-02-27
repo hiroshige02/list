@@ -61,11 +61,6 @@
         }
     },
     created(){
-        //ここでcreateフラグを使ってthis.$data.imageにパスをセットする？？
-        // var parseFile = JSON.parse(this.$props.imgData);
-        console.log('******* CHECK *******');
-        console.log('this.$props.confirmFlag : ' + this.$props.confirmFlag);
-        console.log('createFlag : ' + this.$props.createFlag);
         this.$data.imagePath = this.$props.path;
     },
     watch: {
@@ -80,12 +75,7 @@
             this.$emit('deleteLink');
 
             if(this.$props.imageId != undefined && this.$props.imageId != ''){
-                console.log('deleteImage deleteImage deleteImage');
-                console.log(this.$props.imageId);
-                // this.$data.deleteIds.push(this.$props.imageId);
                 this.$data.deleteFlag = true;
-
-                // console.log(this.$data.deleteIds);
                 return;
             }
 
@@ -96,7 +86,6 @@
                 'create_flag': this.$props.createFlag
             },)
             .then(function(res) {
-                console.log('@@@@@@@@ post tentativeDelete @@@@@@@@');
                 this.cancelClick();
             }).catch(function(error){
                 console.log(error);

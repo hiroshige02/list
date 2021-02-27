@@ -1,9 +1,6 @@
-<template>  
-<!-- <v-btn class="ma-2" color="purple" dark>
-          <v-icon dark>mdi-wrench</v-icon>
-        </v-btn> -->
-    <div>  
-        <v-btn 
+<template>
+    <div>
+        <v-btn
           label="検索"
           :color="buttonColor"
           dark
@@ -15,18 +12,9 @@
     </div>
 </template>
 
-<script> 
+<script>
   export default {
     props: ['buttonColor','isLarge','isNormal','iconType'],
-    data() {
-      return {
-        //初期値
-        // large: "false",
-        // normal: "false",
-        // color: "primary",
-        
-      };
-    },
   }
   //イベント制御をここでする
 </script>

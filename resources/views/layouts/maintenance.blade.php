@@ -1,46 +1,57 @@
 <!DOCTYPE html>
 <html lang="{{ config('app.locale','ja') }}">
-    <head>
+<head>
 
-        <meta charset="UTF-8">
-            <link rel="stylesheet" href="/public/css/app.css">
-            <link rel="stylesheet" href="/public/css/make.css">
-            {{-- icon導入のため --}}
-            <link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
-            <meta name="csrf-token" content="{{ csrf_token() }}">
-        <title>{{ $title }}</title>
-    </head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache">
 
-    <body>
-        <div class="body-container">
-            <div class="title-container">
-                <h1>{{ $title }}</h1>
-            </div>
+        <link rel="stylesheet" href="/public/css/app.css">
+        <link rel="stylesheet" href="/public/css/make.css">
+        {{-- icon導入のため --}}
+        <link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>{{ $title }}</title>
+</head>
 
-            <div class="logout-button">
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button-event
-                    type="submit"
-                    button-text="{{__('master.Logout')}}"
-                    button-color="pink"
-                    :is-small='true'
-                    >
-                    </button-event>
-                </form>
-            </div>
+<body>
+    <div class="body-container">
+        <v-app id="app">
+            <v-main>
+                <div class="title-container">
+                    <h1>{{ $title }}</h1>
 
-            @yield('contents')
-        </div>
-        {{--
-        <script src="{{ mix('/js/app.js') }}"></script>
-        mix-manifest.json内のパスが/public/js/app.jsに変更できるまで不使用
-            --}}
-        <script src="/public/js/app.js"></script>
+                    <div class="logout-button">
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button-event
+                            type="submit"
+                            button-text="{{__('master.Logout')}}"
+                            button-color="pink"
+                            :is-small='true'
+                            >
+                            </button-event>
+                        </form>
+                    </div>
+                    <a href="/maintenance" class="link-top">TOPヘ</a>
+                </div>
 
-        {{-- vueではないjavascript --}}
-        <script src="/public/js/maintenance.js"></script>
-    </body>
+                @yield('contents')
+
+            </v-main>
+        </v-app>
+
+    </div>
+
+
+    {{--
+    <script src="{{ mix('/js/app.js') }}"></script>
+    mix-manifest.json内のパスが/public/js/app.jsに変更できるまで不使用
+        --}}
+    <script src="/public/js/app.js"></script>
+
+    {{-- vueではないjavascript --}}
+    <script src="/public/js/maintenance.js"></script>
+</body>
 </html>
 
 

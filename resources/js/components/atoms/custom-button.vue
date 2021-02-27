@@ -24,24 +24,14 @@
     'isSmall','isNormal','isLarge',
     'height','width','minWidth','minHeight',
     'iconType','font','eventName'],
-    data() {
-      return {
-        //初期値
-        // large: "false",
-        // normal: "false",
-        // color: "primary",
 
-      };
-    },
     methods: {
         onclick(){
             if(this.$props.eventName != undefined){
                 this.$emit(this.$props.eventName);
                 return;
             }
-
         }
     }
-
-  }
+}
 </script>

@@ -45,8 +45,6 @@ class TopController extends Controller
         $viewData['areas'] = MasterDefine::AREAS;
         $viewData['maintenance'] = !empty(Auth::user());
 
-        // var_dump($viewData['maintenance']);exit;
-
         $selections_1 = [];
         $selections_2 = [];
         foreach (MasterDefine::SAKE_DEGREES as $key => $value) {

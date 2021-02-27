@@ -8,12 +8,13 @@
     :error-messages="errorMessages"
     :prefix="prefixText"
     :success-messages="success"
+    :color="color"
     ></v-text-field>
 </template>
 
 <script>
   export default {
     props: ['textTitle','type','name',
-    'prefixText','success','value','errorMessages']
+    'prefixText','success','value','errorMessages','color']
   }
 </script>

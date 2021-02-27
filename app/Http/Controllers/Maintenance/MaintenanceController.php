@@ -38,7 +38,6 @@ class MaintenanceController extends Controller
      */
     public function index()
     {
-
         $viewData = [];
         $viewData['title'] = '管理画面';
         $viewData['searched'] = true;

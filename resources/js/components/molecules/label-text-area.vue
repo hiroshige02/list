@@ -6,6 +6,7 @@
         :value="value"
         :placeholder="placeholder"
         :color="color"
+        :error-messages="errorMessages"
         >
         </text-area>
     </div>
@@ -14,7 +15,7 @@
 
 <script>
   export default {
-    props: ['label','name','value','placeholder','color'],
+    props: ['label','name','value','placeholder','color','errorMessages'],
     data() {
         return {
 

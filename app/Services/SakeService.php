@@ -18,6 +18,7 @@ class SakeService
      *
      * @param string $type
      * @param bool $search_flag
+     *
      * @return array $selections
      */
     public function tastePoint($type, $search_flag=false){
@@ -48,8 +49,6 @@ class SakeService
             array_unshift($selections, '');
         }
 
-        Log::debug('$selections $selections');
-        Log::debug($selections);
         return $selections;
     }
 
@@ -59,6 +58,8 @@ class SakeService
      *
      * @param array|null $old_input
      * @param App\Models\PersonalEvaluation|null $personal
+     *
+     * @return array $tasts
      */
     public function getTasteOptions($old_input=null,$personal=null,$search_flag=false){
         $tasts =  [
@@ -179,7 +180,6 @@ class SakeService
         }
 
         if (!is_null($p_value) && !$flag) {
-                // var_dump($p_value);exit;
             $prefecture['value'] = [
                 'text' => MasterDefine::PREFECTURES[$p_value],
                 'value' => (int)$p_value
@@ -199,9 +199,15 @@ class SakeService
 
     /**
      *
+     * 新規登録/編集画面に表示する
      *
+     * @param array $old_input
+     * @param boolean $flag
+     * @param array $maker
+     *
+     * @return array $maker_evaluations
      */
-    public function getMakerEvaluations($old_input,$flag,$maker=null,$edit=null){
+    public function getMakerEvaluations($old_input,$flag,$maker=null){
         $sake_degree_selections = [];
         foreach(MasterDefine::SAKE_DEGREES as $key => $degree){
             $sake_degree_selections[] = [
@@ -226,7 +232,6 @@ class SakeService
             'selections' => $acid_degree_selections,
         ];
 
-
         $maker_evaluations = [
             'sake_degree' => $sake_degree,
             'amino_acid_degree' => $amino_acid_degree
@@ -240,10 +245,7 @@ class SakeService
                     $master_array = MasterDefine::AMINO_ACID_DEGREES;
                 }
 
-                //これでうまくいったら$makerと$old_inputの処理をまとめられる
                 $value = null;
-
-                //0の時の扱いに困る
                 if(isset($old_input)){
                     $value = $old_input[$column];
                 }elseif(isset($maker[$column])){
@@ -287,6 +289,13 @@ class SakeService
         return $maker_evaluations;
     }
 
+    /**
+     *
+     * 新規登録確認/編集確認画面に表示するデータを返す
+     *
+     * @param array $input
+     * @return array $datas
+     */
     public function getConfirmColumns($input=[]){
         $datas =  [
             'name' => [
@@ -340,9 +349,8 @@ class SakeService
                     $pulldown_keys = array_keys($post['pulldown']);
                     $datas[$column]['value'] = null;
 
-                    // if($input[$column] !== false && (!is_null($input[$column]))
-                    if($post_value == 0 || (!empty($post_value))
-                    && (in_array($post_value, $pulldown_keys))){
+                    if(($post_value == 0 || (!empty($post_value)))
+                    && !is_null($post_value) && (in_array($post_value, $pulldown_keys))){
                         $datas[$column]['value'] = $post['pulldown'][$post_value];
                     }
                 }
@@ -350,18 +358,24 @@ class SakeService
         }
 
         return $datas;
-
     }
 
+    /**
+     *
+     * レーダーチャート用データを返す
+     *
+     * @param \App\Models\Sake $sake
+     * @return array $personal_data
+     */
     public function getRaderDatas($sake){
         //甘さ、酸味、味の濃さ、コストパフォーマンス、淡麗さ、おすすめ度、辛さ　の順番
-        $tanrei = null;
-        if($sake->richness < 0){
+        $tanrei = 0;
+        if($sake->richness < 0) {
             $tanrei = abs($sake->richness);
             $sake->richness = 0;
         }
 
-        $karasa = null;
+        $karasa = 0;
         if($sake->sweetness < 0){
             $karasa = abs($sake->sweetness);
             $sake->sweetness = 0;
@@ -396,8 +410,8 @@ class SakeService
     /**
      * メーカーの評価からアイテムを取得する
      *
-     * @param string $maker_evaluation
-     * @return
+     * @param string $class 評価するカラム //sake_degreeかamino_acid_degreeのいずれか
+     * @return array $sakes_data
      */
     public function getSakeFromMakerEv($class,$evaluation){
         $sakes = Sake::getSakeFromMakerEv($class,$evaluation)->toArray();
@@ -414,17 +428,15 @@ class SakeService
      */
     public function getSakeFromPerosonalEv($personal_ev) {
         $sakes = Sake::getSakeFromPersonalEv($personal_ev);
-
         $sakes_data = $sakes->pluck('name','id');
 
         return $sakes_data;
-
     }
 
     /**
      * 一覧画面用のデータを作る
      *
-     * @param  $sakes
+     * @param \Illuminate\Database\Eloquent\Collection $sakes
      * @return array $datas
      */
     public function getIndexData($sakes) {
@@ -448,6 +460,55 @@ class SakeService
             ];
         }
         return $datas;
+    }
+
+    /**
+     * 登録/更新 用のSakeデータを作る
+     *
+     * @param \App\Models\Sake $sake
+     * @param array $data
+     * @return \App\Models\Sake $sake
+     */
+    public function makeSakeData($sake, $data) {
+        $sake->name = $data['name'];
+        $sake->name_kana = $data['name_kana'];
+        $sake->kura = $data['kura'];
+        $sake->memo = $data['memo'];
+        //post値をキーに置き換える
+        $sake->prefecture = array_search($data['prefecture'],MasterDefine::PREFECTURES);
+
+        return $sake;
+    }
+
+    /**
+     * 登録/更新 用のSakeデータを作る
+     *
+     * @param \App\Models\PersonalEvaluation $spersonal
+     * @param array $data
+     * @return \App\Models\PersonalEvaluation $spersonal
+     */
+    public function makePersonalData($personal, $data) {
+        $personal->sweetness = $data['sweetness'];
+        $personal->acidity = $data['acidity'];
+        $personal->richness = $data['richness'];
+        $personal->cost_performance = $data['cost_performance'];
+        $personal->recommend_point = $data['recommend_point'];
+
+        return $personal;
+    }
+
+    /**
+     * 登録/更新 用のSakeデータを作る
+     *
+     * @param \App\Models\MakerEvaluation $maker
+     * @param array $data
+     * @return \App\Models\MakerEvaluation $maker
+     */
+    public function makeMakerData($maker, $data) {
+        $maker->sake_degree = array_search($data['sake_degree'],MasterDefine::SAKE_DEGREES);
+        $maker->amino_acid_degree = array_search($data['amino_acid_degree'],MasterDefine::AMINO_ACID_DEGREES);
+
+        return $maker;
     }
 
 }

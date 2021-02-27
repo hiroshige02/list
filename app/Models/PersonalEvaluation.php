@@ -48,16 +48,4 @@ class PersonalEvaluation extends Model
         'id', 'created_at', 'updated_at'
     ];
 
-    // /**
-    // この程度ならメソッド化不要？
-    //  * 酒IDと結びつく個人評価を返す
-    //  *
-    //  * @param int $sake_id
-    //  * @return \App\Models\user\PersonalEvaluation
-    //  */
-    // public static function getEvaluationFromSakeId($sake_id){
-    //     return PersonalEvaluation::whereSakeId($sake_id);
-    // }
-
-
 }

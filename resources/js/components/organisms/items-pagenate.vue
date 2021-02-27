@@ -7,6 +7,8 @@
         >
         </list-index>
 
+        <p v-if="noData" align="center">該当のお酒がありませんでした。</p>
+
         <v-row justify="center">
             <v-col cols=12>
                 <pagenation
@@ -30,11 +32,18 @@ export default {
         return {
             lists: [],
             currentPage: undefined,
-            isMaintenance: this.$props.maintenance
+            isMaintenance: this.$props.maintenance,
+            noData: false
         }
     },
     created(){
         let parsedData = JSON.parse(this.$props.datas);
+
+        if(parsedData.length === 0) {
+            this.$data.noData = true;
+            return;
+        }
+
         this.$data.lists = parsedData.slice(0,this.$props.perPage);
 
         if(this.$props.returnPage != undefined){
@@ -47,8 +56,6 @@ export default {
             let startIndex = (this.$data.currentPage-1) * perPage;
             //表示画像取得
             this.$data.lists = parsedData.slice(startIndex, this.$data.currentPage * perPage);
-
-
         }
     },
     methods: {

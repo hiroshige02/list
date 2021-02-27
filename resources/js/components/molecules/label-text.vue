@@ -6,6 +6,7 @@
         :value="value"
         :name="name"
         :error-messages="errorMessages"
+        :color="color"
         >
         </input-text>
     </div>
@@ -14,6 +15,6 @@
 <script>
 
     export default {
-        props: ['textTitle','type','value','name','errorMessages']
+        props: ['textTitle','type','value','name','errorMessages','color']
     }
 </script>

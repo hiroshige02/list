@@ -63,7 +63,8 @@ class Handler extends ExceptionHandler
         if($status == 404){
             $message = __('master.NotFound');
         }elseif($status == 500){
-            $message = __('master.TemporalError');
+            $message = $e->getMessage()?
+                $e->getMessage() : __('master.TemporalError');
         }
 
         if (view()->exists($view = $this->getHttpExceptionView($e))) {

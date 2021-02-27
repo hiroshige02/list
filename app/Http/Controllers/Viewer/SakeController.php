@@ -42,7 +42,7 @@ class SakeController extends Controller
      * 酒の詳細表示画面に遷移
      *
      * @param int $sake_id
-     * @param \Illuminate\Http\Request
+     * @param \Illuminate\Http\Request $request
      * @return void
      *
      */
@@ -89,15 +89,11 @@ class SakeController extends Controller
      *
      * @param int $sake_id
      * @param int $page
+     * @param \Illuminate\Http\Request $request
      * @return void
      *
      */
     public function pageSet($sake_id, $page, Request $request){
-        Log::debug($sake_id);
-        Log::debug($page);
-        // var_dump($sake_id);
-        // var_dump($page);exit;
-
         $request->session()->put('page_number', $page);
         return redirect("/sake/{$sake_id}");
 
@@ -106,8 +102,9 @@ class SakeController extends Controller
 
     /**
      * 検索結果表示
-     * @param \Illuminate\Http\Request
+     * @param \Illuminate\Http\Request $request
      * @return void
+     *
      */
     public function search(Request $request)
     {
@@ -127,7 +124,7 @@ class SakeController extends Controller
         $datas = $this->sakeService->getIndexData($sakes);
 
         //ページネーション準備
-        $per_page = 2;
+        $per_page = 5;
         $viewData['per_page'] = $per_page;
         $total_pages = count($sakes) % $per_page ?
         ceil(count($sakes)/$per_page) : count($sakes)/$per_page;
@@ -139,11 +136,12 @@ class SakeController extends Controller
         return view('viewer.searched', $viewData);
     }
 
-        /**
+    /**
      * 指定された条件でアイテムの検索して返す
      *
-     * @param \Illuminate\Http\Request
+     * @param \Illuminate\Http\Request $request
      * @return json
+     *
      */
     function sakeSearch(Request $request){
         $search_text = $request->get('search_text');
@@ -168,8 +166,6 @@ class SakeController extends Controller
                 $sakes_data = $this->sakeService->getSakeFromMakerEv($search_class, $search_text);
                 break;
             case 3:
-                Log::debug('$personal_ev $personal_ev');
-
                 $judge = array_filter($search_text);
 
                 if(empty($judge)) {
@@ -189,12 +185,12 @@ class SakeController extends Controller
      * コンストラクタ
      *
      * @param int $prefecture
+     * @param \Illuminate\Http\Request $request
      * @return void
      *
      */
     public function prefectureIndex($prefecture, Request $request)
     {
-
         $viewData = [];
         $viewData['return_page'] = 1;
         $viewData['maintenance'] = !empty(Auth::user());
@@ -221,7 +217,7 @@ class SakeController extends Controller
         $viewData['datas'] = $datas;
 
         //ページネーション準備
-        $per_page = 2;
+        $per_page = 5;
         $viewData['per_page'] = $per_page;
         $total_pages = count($sakes) % $per_page ?
         ceil(count($sakes)/$per_page) : count($sakes)/$per_page;

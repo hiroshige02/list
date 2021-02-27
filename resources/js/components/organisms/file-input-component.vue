@@ -25,24 +25,25 @@
             :name="name"
             :button-color="buttonColor"
             :is-small="isSmall"
-            :is-large="isLarge"
-            >
+            :is-large="isLarge">
             </file-input>
         </div>
 
         <v-col cols="12">
-            <v-col cols=2 @click="increaseInput()">
-                <button-event
-                button-text="＋"
-                button-color="pink"
-                :is-normal='true'
-                width="45"
-                height="40"
-                min-width="20"
-                min-height="20"
-                :font="font"
-                >
-                </button-event>
+            <v-col cols="2">
+                <span @click="increaseInput()">
+                    <button-event
+                    button-text="＋"
+                    button-color="pink"
+                    :is-normal='true'
+                    width="45"
+                    height="40"
+                    min-width="20"
+                    min-height="20"
+                    :font="font"
+                    >
+                    </button-event>
+                </span>
             </v-col>
         </v-col>
 
@@ -56,15 +57,12 @@
     "minWidth","minHeight"],
     methods: {
         increaseInput(){
-            console.log('increase increase');
             this.$data.emptyField = this.$data.emptyField + 1;
-            console.log(this.$data.emptyField);
         }
     },
     created(){
         if(this.$props.files){
             this.$data.dataFiles = this.$props.files;
-            console.log('files' + this.$data.dataFiles); //OK
         }
     },
     data(){

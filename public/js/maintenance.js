@@ -3,6 +3,5 @@ function displayToggle(id){
     //他のエリアがオープンしてたらクローズしなきゃいけないんじゃない？
 
     let id_string = id + "_prefectures";
-    console.log(id_string);
     document.getElementById(id_string).classList.toggle('hide');
 }
