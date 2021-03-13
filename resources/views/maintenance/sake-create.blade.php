@@ -120,7 +120,7 @@
         @error('file.*')
             @foreach($errors->get('file.*') as $messages)
                 @foreach($messages as $message)
-                    <p style="color:#ff5252">{{ $message }}</p>
+                    <p style="error-font">{{ $message }}</p>
                 @endforeach
             @endforeach
         @enderror

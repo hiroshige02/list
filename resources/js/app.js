@@ -55,6 +55,7 @@ Vue.component('modal-link', require('./components/organisms/modal-link.vue').def
 Vue.component('items-pagenate', require('./components/organisms/items-pagenate.vue').default);
 Vue.component('text-search', require('./components/organisms/text-search.vue').default);
 Vue.component('personal-search', require('./components/organisms/personal-search.vue').default);
+Vue.component('image-regist', require('./components/organisms/image-regist.vue').default);
 
 
 /**

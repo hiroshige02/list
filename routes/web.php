@@ -23,7 +23,7 @@ Route::get('/sake/{id}', 'Viewer\SakeController@show');
 Route::get('/', 'Viewer\TopController@welcome');
 Route::post('/sake/search', 'Viewer\SakeController@search');
 Route::get('/sake/{sake_id}/{page}', 'Viewer\SakeController@pageSet');
-Route::get('/register', 'Auth\RegisterController@showRegistrationForm')->name('register');
+// Route::get('/register', 'Auth\RegisterController@showRegistrationForm')->name('register');
 
 // ログイン済みルート
 Route::group(['middleware' => ['auth']], function () {
@@ -31,7 +31,6 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/maintenance', 'Maintenance\MaintenanceController@index');
 
-    // このあたりresourcesでまとめられないか
     Route::resource('/maintenance/sake',
         '\App\Http\Controllers\Maintenance\SakeController',
         ['only'=>['create','store','edit','update','show','index']]);

@@ -1,21 +1,6 @@
 <template>
     <v-col cols="12" sm="10" class="no-gutters">
 
-        <div v-for="(file,index) in dataFiles"
-        :key="index">
-            <file-input
-            :button-text="buttonText"
-            :is-normal="true"
-            :font="font"
-            :name="name"
-            :value="file"
-            :button-color="buttonColor"
-            :is-small="isSmall"
-            :is-large="isLarge"
-            >
-            </file-input>
-        </div>
-
         <div v-for="(count,i) in emptyField"
         :key="i+10">
             <file-input
@@ -25,11 +10,14 @@
             :name="name"
             :button-color="buttonColor"
             :is-small="isSmall"
-            :is-large="isLarge">
+            :is-large="isLarge"
+            :total-images="totalImage"
+            @decInput="decreaseInput"
+            >
             </file-input>
         </div>
 
-        <v-col cols="12">
+        <v-col cols="12" ref="increaseInput">
             <v-col cols="2">
                 <span @click="increaseInput()">
                     <button-event
@@ -53,11 +41,18 @@
 <script>
   export default {
     props: ["name","buttonText","files","font",
-    "buttonColor","isSmall","isLarge","height","width",
-    "minWidth","minHeight"],
+    "buttonColor","isSmall","isLarge","height","width","totalImage"],
     methods: {
         increaseInput(){
+            this.$emit('increaseInput');
+
+            if(this.$props.totalImage >= 5) {
+                return;
+            }
             this.$data.emptyField = this.$data.emptyField + 1;
+        },
+        decreaseInput() {
+            this.$emit('decreaseInput');
         }
     },
     created(){

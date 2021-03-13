@@ -136,46 +136,15 @@
         {{-- 画像 --}}
         <h4>{{__('master.Picture')}}</h4>
 
-        @if(!empty($image_datas))
-            <v-col cols="12" class="no-gutters">
-                <v-col cols="4">
-                    <p>{{__('master.RegisteredPicture')}}</p>
-                </v-col>
-            </v-col>
+        <image-regist
+        :image-file='@json($image_datas)'
+        :errors='@json($errors->get('file.*'))'
+        user-id = "{{ $user_id }}"
+        :tentative-file='@json($tentative_images)'
+        total-image="{{ count($image_datas)+count($tentative_images) }}"
+        >
+        </image-regist>
 
-            @foreach($image_datas as $image)
-                <modal-link
-                file='@json($image)'
-                user-id = "{{ $user_id }}"
-                >
-                </modal-link>
-            @endforeach
-        @endif
-
-        {{-- エラー表示 --}}
-        @error('file.*')
-            @foreach($errors->get('file.*') as $messages)
-                @foreach($messages as $message)
-                    <p style="color:#ff5252">{{ $message }}</p>
-                @endforeach
-            @endforeach
-        @enderror
-
-        @if(!empty($tentative_images))
-            <v-col cols="12" class="no-gutters">
-                <v-col cols="4">
-                    <p>{{__('master.NewPicture')}}</p>
-                </v-col>
-            </v-col>
-
-            @foreach($tentative_images as $image)
-                <modal-link
-                file='@json($image)'
-                user-id = "{{ $user_id }}"
-                >
-                </modal-link>
-            @endforeach
-        @endif
 
         @if(!empty($delete_image_ids))
             @foreach($delete_image_ids as $image_id)
@@ -183,13 +152,6 @@
             @endforeach
         @endif
 
-        <v-row no-gutters>
-            <file-input-component
-            name="file[]"
-            font="incre-del-button"
-            >
-            </file-input-component>
-        </v-row>
 
         <!-- 編集確認ボタン -->
         <v-row>

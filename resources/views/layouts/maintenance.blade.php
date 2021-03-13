@@ -18,21 +18,29 @@
         <v-app id="app">
             <v-main>
                 <div class="title-container">
-                    <h1>{{ $title }}</h1>
+                    <v-row>
 
-                    <div class="logout-button">
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <button-event
-                            type="submit"
-                            button-text="{{__('master.Logout')}}"
-                            button-color="pink"
-                            :is-small='true'
-                            >
-                            </button-event>
-                        </form>
-                    </div>
-                    <a href="/maintenance" class="link-top">TOPヘ</a>
+                        <v-col cols="12" class="d-flex no-gutters">
+                            <v-col cols="6" class="" style="padding-left:100px">
+                                    <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button-event
+                                type="submit"
+                                button-text="{{__('master.Logout')}}"
+                                button-color="pink"
+                                :is-small='true'
+                                >
+                                </button-event>
+                                </form>
+                            </v-col>
+                            <v-col cols="5">
+                                <a href="/maintenance" class="link-top">TOPヘ</a>
+                            </v-col>
+                        </v-col>
+
+                    </v-row>
+
+                    <h1>{{ $title }}</h1>
                 </div>
 
                 @yield('contents')

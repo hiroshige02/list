@@ -34,12 +34,12 @@
     "buttonColor","value"],
     data(){
         return{
-
         }
     },
     methods: {
         decreaseInput(){
             this.$refs.file_input.remove();
+            this.$emit('decInput');
         }
     }
   }

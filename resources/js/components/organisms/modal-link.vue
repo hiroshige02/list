@@ -33,7 +33,8 @@
         }
     },
     created(){
-        var parseFile = JSON.parse(this.$props.file);
+        var parseFile = this.$props.file;
+
         if(parseFile['create_flag'] != undefined){
             this.$data.imagePath = `/storage/app/public/img/tmp/${this.$props.userId}/${parseFile['path']}`;
             this.$data.createFlag = true;
@@ -55,13 +56,15 @@
             //リンククリックでモーダルオープン
             this.$data.showContent = true;
         },
-        //子コンポーネントからのemit
+        // 子コンポーネントからのemit
         closeModal(){
             this.$data.showContent = false;
         },
         deleteLinkImage(){
             this.$refs.modalLink.remove();
             this.$data.deleteFlag = true;
+            // トータル画像数の変更
+            this.$emit('decreaseInput');
         }
     }
 
